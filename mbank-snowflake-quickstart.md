@@ -536,7 +536,7 @@ SELECT * FROM TABLE(INFORMATION_SCHEMA.EXTERNAL_TABLE_FILES(
 - [Stages](https://docs.snowflake.com/en/user-guide/data-load-considerations-stage)
 
 ## Dynamic Tables
-Duration: 10
+Duration: 15
 
 ### Tworzenie Dynamic Tables
 
@@ -593,6 +593,73 @@ SELECT
 FROM MBANK_CUSTOMERS c
 JOIN MBANK_ACCOUNTS a ON c.CUSTOMER_ID = a.CUSTOMER_ID;
 ```
+
+### Testowanie Dynamic Tables w akcji
+
+Teraz przetestujemy jak Dynamic Tables reagują na zmiany danych:
+
+```sql
+-- Sprawdzenie aktualnego stanu Dynamic Tables
+SELECT * FROM MBANK_ACCOUNT_SUMMARY ORDER BY ACCOUNT_TYPE;
+SELECT * FROM MBANK_CUSTOMER_METRICS ORDER BY HOUR_PERIOD;
+
+-- Dodanie nowego klienta
+INSERT INTO MBANK_CUSTOMERS 
+(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER)
+VALUES 
+(11, 'Adam', 'Kowalski', 'adam.kowalski@mbank.pl', '+48444555666');
+
+-- Dodanie konta dla nowego klienta
+INSERT INTO MBANK_ACCOUNTS 
+(ACCOUNT_ID, CUSTOMER_ID, ACCOUNT_TYPE, BALANCE)
+VALUES 
+(13, 11, 'CHECKING', 15000.00),
+(14, 11, 'SAVINGS', 50000.00);
+
+-- Modyfikacja salda istniejacego konta
+UPDATE MBANK_ACCOUNTS 
+SET BALANCE = 75000.00 
+WHERE ACCOUNT_ID = 1;
+
+-- Sprawdzenie zmian w Dynamic Tables po kilku minutach
+-- Dynamic Tables odswiezaja sie zgodnie z TARGET_LAG
+SELECT * FROM MBANK_ACCOUNT_SUMMARY ORDER BY ACCOUNT_TYPE;
+SELECT COUNT(*) AS total_customers FROM MBANK_CUSTOMER_METRICS;
+
+-- Sprawdzenie czy nowy klient pojawil sie w widoku
+SELECT * FROM MBANK_CUSTOMER_ACCOUNT_VIEW 
+WHERE CUSTOMER_ID = 11;
+
+-- Usuniecie testowych danych
+DELETE FROM MBANK_ACCOUNTS WHERE CUSTOMER_ID = 11;
+DELETE FROM MBANK_CUSTOMERS WHERE CUSTOMER_ID = 11;
+
+-- Cofniecie zmiany salda
+UPDATE MBANK_ACCOUNTS 
+SET BALANCE = 5000.00 
+WHERE ACCOUNT_ID = 1;
+
+-- Ponowne sprawdzenie Dynamic Tables po usunięciu
+SELECT * FROM MBANK_ACCOUNT_SUMMARY ORDER BY ACCOUNT_TYPE;
+
+-- OPCJONALNIE: Wymuszenie odswiezenia Dynamic Table (zamiast czekania na TARGET_LAG)
+-- ALTER DYNAMIC TABLE MBANK_ACCOUNT_SUMMARY REFRESH;
+
+-- Sprawdzenie czasu ostatniego odswiezenia
+SELECT 
+    NAME,
+    LAST_DATA_TIMESTAMP,
+    DATEDIFF('minute', LAST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) AS MINUTES_SINCE_REFRESH
+FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLES())
+WHERE NAME IN ('MBANK_ACCOUNT_SUMMARY', 'MBANK_CUSTOMER_METRICS');
+```
+
+**💡 Obserwacje podczas testowania:**
+- Dynamic Tables odświeżają się automatycznie zgodnie z `TARGET_LAG`
+- Zmiany w danych źródłowych są propagowane do Dynamic Tables
+- Można wymusić natychmiastowe odświeżanie przez `ALTER DYNAMIC TABLE ... REFRESH`
+- Można monitorować proces odświeżania przez `INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY()`
+- TARGET_LAG to maksymalny dopuszczalny lag - rzeczywiste odświeżanie może być częstsze
 
 ### 📚 Dodatkowe zasoby
 
