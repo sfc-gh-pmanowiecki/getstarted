@@ -841,10 +841,4 @@ Gratulacje! Ukończyłeś mBank Snowflake Database Quickstart. Teraz znasz:
 3. Zoptymalizuj wydajność zapytań
 4. Skonfiguruj monitoring i alerting
 
-### Dodatkowe zasoby
-
-- [Snowflake Documentation](https://docs.snowflake.com/)
-- [mBank Technical Guidelines](https://mbank-tech-docs.internal)
-- [SQL Best Practices](https://best-practices.mbank.internal)
-
 Dziękujemy za uczestnictwo w mBank Snowflake Quickstart! 🎉 
