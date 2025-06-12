@@ -812,6 +812,44 @@ WHERE DATEDIFF('minute', LATEST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) >
 - Monitoruj Graph View przy złożonych pipeline'ach z wieloma Dynamic Tables
 - Skonfiguruj alerty dla failed refreshes przez Snowsight notifications
 
+### 🚀 Rozszerzenie laboratorium - Zaawansowane Dynamic Tables
+
+Po ukończeniu tego quickstartu, zalecamy przejście do oficjalnego **Snowflake Dynamic Tables Quickstart**, który pokrywa zaawansowane scenariusze:
+
+**[Getting Started with Dynamic Tables - Snowflake Quickstart](https://quickstarts.snowflake.com/guide/getting_started_with_dynamic_tables/#0)**
+
+**Co znajdziesz w rozszerzonym laboratorium:**
+
+🔄 **Change Data Capture (CDC) Pipeline**
+- Budowa pipeline'u CDC z użyciem Dynamic Tables
+- Automatyczne przetwarzanie zmian w danych źródłowych
+- Łączenie i agregacja danych z wielu źródeł
+
+📊 **Zaawansowane przypadki użycia:**
+- **Cumulative Sum** z użyciem Python UDTF
+- **Data Validation** i automatyczne alerty
+- **Inventory Management** - monitoring stanów magazynowych
+- **DAG Visualization** - wizualizacja złożonych pipeline'ów
+
+🐍 **Integracja z Python:**
+- Snowpark User-Defined Table Functions (UDTF)
+- Generowanie danych testowych z biblioteką Faker
+- Modularyzacja logiki biznesowej
+
+📧 **Alerting i Notifications:**
+- Konfiguracja Snowflake Alerts
+- Automatyczne powiadomienia email
+- Monitoring jakości danych w czasie rzeczywistym
+
+**Dlaczego warto kontynuować:**
+- Praktyczne scenariusze biznesowe (e-commerce, retail)
+- Kompleksowe pipeline'y danych z wieloma Dynamic Tables
+- Best practices dla produkcyjnych wdrożeń
+- Monitoring kosztów i wydajności
+
+**Szacowany czas:** 60-90 minut  
+**Poziom:** Średniozaawansowany do zaawansowanego
+
 ### 📚 Dodatkowe zasoby
 
 - [Monitor Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-monitor)
