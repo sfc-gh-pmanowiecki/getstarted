@@ -100,7 +100,7 @@ CREATE TABLE MBANK_CUSTOMERS (
 );
 ```
 
-### Typy danych w Snowflake
+### Przykładowe typy danych w Snowflake
 
 - **NUMBER** - liczby całkowite i dziesiętne
 - **VARCHAR** - tekst o zmiennej długości  
