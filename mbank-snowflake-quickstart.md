@@ -9,7 +9,7 @@ feedback link: https://github.com/sfc-gh-pmanowiecki/getstarted
 # Snowflake Database Quickstart
 
 ## Wprowadzenie
-Duration: 3
+Duration: 5
 
 ### What You'll Learn
 
@@ -32,12 +32,12 @@ W tym quickstarcie nauczysz się podstawowych konceptów i operacji w Snowflake,
 ### 📥 Kompletny skrypt SQL
 
 Wszystkie polecenia SQL z tego quickstartu są dostępne w jednym pliku:
-**[📁 mbank-snowflake-quickstart-complete.sql](./mbank-snowflake-quickstart-complete.sql)**
+**[📁 mbank-snowflake-quickstart-complete.sql](https://raw.githubusercontent.com/sfc-gh-pmanowiecki/getstarted/refs/heads/main/mbank-snowflake-quickstart-complete.sql)**
 
 Możesz pobrać ten plik i wykonywać polecenia sekcja po sekcji, lub skopiować i wkleić poszczególne fragmenty do swojego środowiska Snowflake.
 
 ## Obiekty bazodanowe
-Duration: 6
+Duration: 8
 
 ### Przegląd obiektów bazodanowych
 
@@ -84,7 +84,7 @@ SHOW SCHEMAS;
 - [SQL Commands Reference](https://docs.snowflake.com/en/sql-reference/sql-all)
 
 ## Tables  
-Duration: 12
+Duration: 15
 
 ### Tworzenie tabel
 
@@ -179,7 +179,7 @@ ORDER BY c.CUSTOMER_ID, a.ACCOUNT_TYPE;
 - [Working with Tables](https://docs.snowflake.com/en/user-guide/tables-intro)
 
 ## Objects
-Duration: 5
+Duration: 7
 
 ### Zarządzanie obiektami
 
@@ -222,7 +222,7 @@ GRANT SELECT ON TABLE MBANK_ACCOUNTS TO ROLE PUBLIC;
 - [GRANT Privileges](https://docs.snowflake.com/en/sql-reference/sql/grant-privilege)
 
 ## Constraints
-Duration: 8
+Duration: 10
 
 ### Obsługiwane typy ograniczeń w Snowflake
 
@@ -291,7 +291,7 @@ WHERE TABLE_SCHEMA = 'QUICKSTART_SCHEMA';
 - [Referential Integrity](https://docs.snowflake.com/en/user-guide/table-considerations#referential-integrity-constraints)
 
 ## Views
-Duration: 10
+Duration: 12
 
 ### Tworzenie widoków
 
@@ -375,7 +375,7 @@ ORDER BY ACCOUNT_DATE, ACCOUNT_TYPE;
 - [Working with Views](https://docs.snowflake.com/en/user-guide/views-introduction)
 
 ## Używanie funkcji Result_Scan
-Duration: 4
+Duration: 6
 
 ### Funkcja RESULT_SCAN
 
@@ -412,7 +412,7 @@ SELECT * FROM TABLE(RESULT_SCAN('01234567-89ab-cdef-ghij-klmnopqrstuv'));
 - [Information Schema](https://docs.snowflake.com/en/sql-reference/info-schema)
 
 ## System Functions
-Duration: 5
+Duration: 6
 
 ### Funkcje informacyjne
 
@@ -460,7 +460,7 @@ SELECT
 - [Context Functions](https://docs.snowflake.com/en/sql-reference/functions/current_user)
 
 ## External Tables
-Duration: 6
+Duration: 10
 
 ### Tworzenie External Table
 
@@ -536,7 +536,7 @@ SELECT * FROM TABLE(INFORMATION_SCHEMA.EXTERNAL_TABLE_FILES(
 - [Stages](https://docs.snowflake.com/en/user-guide/data-load-considerations-stage)
 
 ## Dynamic Tables - Wprowadzenie
-Duration: 8
+Duration: 10
 
 ### Możliwości Dynamic Tables
 
@@ -594,7 +594,7 @@ SELECT * FROM MBANK_ACCOUNT_SUMMARY ORDER BY ACCOUNT_TYPE;
 - [Refresh Modes](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh)
 
 ## Dynamic Tables - Testowanie
-Duration: 12
+Duration: 15
 
 ### Testowanie Dynamic Tables w akcji
 
