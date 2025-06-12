@@ -23,14 +23,14 @@ echo "📝 Converting Markdown to Codelab format..."
 claat export mbank-snowflake-quickstart.md
 
 # Check if build was successful
-if [ ! -d "mbank-snowflake-quickstart" ]; then
+if [ ! -d "snowflake-quickstart" ]; then
     echo "❌ Build failed - directory not created"
     exit 1
 fi
 
 # Move the generated content to docs folder
 echo "📁 Moving content to docs folder..."
-mv mbank-snowflake-quickstart docs
+mv snowflake-quickstart docs
 
 echo "🎨 Applying mBank custom styles..."
 

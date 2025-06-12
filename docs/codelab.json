@@ -3,11 +3,11 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2025-06-12T11:19:35+02:00",
-  "id": "mbank-snowflake-quickstart",
+  "updated": "2025-06-12T12:49:41+02:00",
+  "id": "snowflake-quickstart",
   "duration": 68,
   "title": "mBank Snowflake Database Quickstart",
-  "summary": "mBank Snowflake Database Quickstart Guide",
+  "summary": "Snowflake Database Quickstart Guide",
   "source": "mbank-snowflake-quickstart.md",
   "theme": "",
   "status": [
@@ -21,7 +21,7 @@
   "tags": [
     "web"
   ],
-  "feedback": "https://github.com/mbank/snowflake-quickstart",
+  "feedback": "https://github.com/pablomano/snowflake-quickstart",
   "ga": "UA-000000-0",
-  "url": "mbank-snowflake-quickstart"
+  "url": "snowflake-quickstart"
 }
