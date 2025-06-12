@@ -29,6 +29,13 @@ W tym quickstarcie nauczysz się podstawowych konceptów i operacji w Snowflake,
 - Podstawowa znajomość SQL
 - Uprawnienia do tworzenia obiektów w bazie danych
 
+### 📥 Kompletny skrypt SQL
+
+Wszystkie polecenia SQL z tego quickstartu są dostępne w jednym pliku:
+**[📁 mbank-snowflake-quickstart-complete.sql](./mbank-snowflake-quickstart-complete.sql)**
+
+Możesz pobrać ten plik i wykonywać polecenia sekcja po sekcji, lub skopiować i wkleić poszczególne fragmenty do swojego środowiska Snowflake.
+
 ## Database Objects and Commands
 Duration: 5
 
@@ -69,6 +76,12 @@ SHOW DATABASES;
 -- Sprawdzenie schematów
 SHOW SCHEMAS;
 ```
+
+### 📚 Dodatkowe zasoby
+
+- [Database Objects Overview](https://docs.snowflake.com/en/sql-reference/ddl-database)
+- [Schema Management](https://docs.snowflake.com/en/sql-reference/ddl-schema)
+- [SQL Commands Reference](https://docs.snowflake.com/en/sql-reference/sql-all)
 
 ## Tables  
 Duration: 8
@@ -114,6 +127,13 @@ Stwórz tabelę `MBANK_ACCOUNTS` z kolumnami:
 - BALANCE (NUMBER(15,2))
 - CREATED_DATE (TIMESTAMP_NTZ)
 
+### 📚 Dodatkowe zasoby
+
+- [CREATE TABLE](https://docs.snowflake.com/en/sql-reference/sql/create-table)
+- [Data Types](https://docs.snowflake.com/en/sql-reference/data-types)
+- [INSERT Statement](https://docs.snowflake.com/en/sql-reference/sql/insert)
+- [Working with Tables](https://docs.snowflake.com/en/user-guide/tables-intro)
+
 ## Objects
 Duration: 4
 
@@ -124,25 +144,38 @@ Snowflake oferuje bogate możliwości zarządzania obiektami bazodanowymi.
 ### Informacje o obiektach
 
 ```sql
--- Opis obiektu
-DESCRIBE TABLE nazwa_tabeli;
+-- Opis tabeli MBANK_CUSTOMERS
+DESCRIBE TABLE MBANK_CUSTOMERS;
 
 -- Lista wszystkich tabel
 SHOW TABLES;
 
--- Informacje o kolumnach
-SHOW COLUMNS IN TABLE nazwa_tabeli;
+-- Informacje o kolumnach w tabeli MBANK_CUSTOMERS
+SHOW COLUMNS IN TABLE MBANK_CUSTOMERS;
+
+-- Informacje o tabeli MBANK_ACCOUNTS (jeśli została stworzona)
+DESCRIBE TABLE MBANK_ACCOUNTS;
 ```
 
 ### Uprawnienia
 
 ```sql
--- Przyznawanie uprawnień
-GRANT SELECT ON TABLE nazwa_tabeli TO ROLE rola_użytkownika;
+-- Przyznawanie uprawnień do tabeli MBANK_CUSTOMERS
+GRANT SELECT ON TABLE MBANK_CUSTOMERS TO ROLE PUBLIC;
 
--- Sprawdzanie uprawnień
-SHOW GRANTS ON TABLE nazwa_tabeli;
+-- Sprawdzanie uprawnień do tabeli MBANK_CUSTOMERS
+SHOW GRANTS ON TABLE MBANK_CUSTOMERS;
+
+-- Przyznawanie uprawnień do tabeli MBANK_ACCOUNTS
+GRANT SELECT ON TABLE MBANK_ACCOUNTS TO ROLE PUBLIC;
 ```
+
+### 📚 Dodatkowe zasoby
+
+- [DESCRIBE Command](https://docs.snowflake.com/en/sql-reference/sql/desc-table)
+- [SHOW Commands](https://docs.snowflake.com/en/sql-reference/sql/show)
+- [Access Control](https://docs.snowflake.com/en/user-guide/security-access-control-overview)
+- [GRANT Privileges](https://docs.snowflake.com/en/sql-reference/sql/grant-privilege)
 
 ## Constraints
 Duration: 6
@@ -157,8 +190,13 @@ CREATE TABLE MBANK_PRODUCTS (
     PRODUCT_ID NUMBER(10,0) PRIMARY KEY,
     PRODUCT_NAME VARCHAR(100) NOT NULL,
     PRODUCT_TYPE VARCHAR(50),
-    PRICE NUMBER(10,2) CHECK (PRICE > 0)
+    PRICE NUMBER(10,2)
 );
+
+-- Dodanie CHECK constraint
+ALTER TABLE MBANK_PRODUCTS 
+ADD CONSTRAINT CHK_PRICE_POSITIVE 
+CHECK (PRICE > 0);
 ```
 
 ### Foreign Key
@@ -187,6 +225,13 @@ CHECK (BALANCE >= 0);
 ALTER TABLE MBANK_CUSTOMERS 
 ALTER COLUMN EMAIL SET NOT NULL;
 ```
+
+### 📚 Dodatkowe zasoby
+
+- [Table Constraints](https://docs.snowflake.com/en/sql-reference/constraints-overview)
+- [Primary and Foreign Keys](https://docs.snowflake.com/en/user-guide/table-considerations#referential-integrity-constraints)
+- [ALTER TABLE](https://docs.snowflake.com/en/sql-reference/sql/alter-table)
+- [CHECK Constraints](https://docs.snowflake.com/en/sql-reference/constraints-overview#check-constraints)
 
 ## Views
 Duration: 5
@@ -233,6 +278,13 @@ FROM MBANK_ACCOUNTS
 GROUP BY DATE_TRUNC('DAY', CREATED_DATE), ACCOUNT_TYPE;
 ```
 
+### 📚 Dodatkowe zasoby
+
+- [CREATE VIEW](https://docs.snowflake.com/en/sql-reference/sql/create-view)
+- [Secure Views](https://docs.snowflake.com/en/user-guide/views-secure)
+- [Materialized Views](https://docs.snowflake.com/en/user-guide/views-materialized)
+- [Working with Views](https://docs.snowflake.com/en/user-guide/views-introduction)
+
 ## Using the Result_Scan Function
 Duration: 4
 
@@ -263,6 +315,12 @@ LIMIT 5;
 -- Użycie konkretnego ID zapytania
 SELECT * FROM TABLE(RESULT_SCAN('01234567-89ab-cdef-ghij-klmnopqrstuv'));
 ```
+
+### 📚 Dodatkowe zasoby
+
+- [RESULT_SCAN Function](https://docs.snowflake.com/en/sql-reference/functions/result_scan)
+- [Query History](https://docs.snowflake.com/en/user-guide/ui-history)
+- [Information Schema](https://docs.snowflake.com/en/sql-reference/info-schema)
 
 ## System Functions
 Duration: 6
@@ -304,6 +362,13 @@ SELECT
     TO_DATE('2024-01-15', 'YYYY-MM-DD') AS DATE_VALUE,
     TO_VARCHAR(CURRENT_DATE(), 'YYYY-MM-DD') AS STRING_DATE;
 ```
+
+### 📚 Dodatkowe zasoby
+
+- [System Functions](https://docs.snowflake.com/en/sql-reference/functions-system)
+- [Date and Time Functions](https://docs.snowflake.com/en/sql-reference/functions-date-time)
+- [Conversion Functions](https://docs.snowflake.com/en/sql-reference/functions-conversion)
+- [Context Functions](https://docs.snowflake.com/en/sql-reference/functions/current_user)
 
 ## External Tables
 Duration: 7
@@ -350,6 +415,13 @@ SELECT * FROM TABLE(INFORMATION_SCHEMA.EXTERNAL_TABLE_FILES(
     TABLE_NAME => 'MBANK_EXTERNAL_CUSTOMERS'
 ));
 ```
+
+### 📚 Dodatkowe zasoby
+
+- [External Tables](https://docs.snowflake.com/en/user-guide/tables-external-intro)
+- [CREATE EXTERNAL TABLE](https://docs.snowflake.com/en/sql-reference/sql/create-external-table)
+- [File Formats](https://docs.snowflake.com/en/sql-reference/sql/create-file-format)
+- [Stages](https://docs.snowflake.com/en/user-guide/data-load-considerations-stage)
 
 ## Dynamic Tables
 Duration: 8
@@ -410,6 +482,13 @@ FROM MBANK_CUSTOMERS c
 JOIN MBANK_ACCOUNTS a ON c.CUSTOMER_ID = a.CUSTOMER_ID;
 ```
 
+### 📚 Dodatkowe zasoby
+
+- [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
+- [CREATE DYNAMIC TABLE](https://docs.snowflake.com/en/sql-reference/sql/create-dynamic-table)
+- [Dynamic Tables Best Practices](https://docs.snowflake.com/en/user-guide/dynamic-tables-best-practices)
+- [Refresh Modes](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh)
+
 ## Dynamic Table Advantages
 Duration: 5
 
@@ -452,6 +531,13 @@ SELECT ...;
 - Monitoruj koszty warehouse
 - Optymalizuj zapytania bazowe
 - Wykorzystuj partycjonowanie gdzie to możliwe
+
+### 📚 Dodatkowe zasoby
+
+- [Dynamic Tables Performance](https://docs.snowflake.com/en/user-guide/dynamic-tables-tasks-create)
+- [Cost Optimization](https://docs.snowflake.com/en/user-guide/cost-understanding-compute)
+- [Comparing Dynamic Tables vs Tasks](https://docs.snowflake.com/en/user-guide/dynamic-tables-comparison-tasks)
+- [Incremental Processing](https://docs.snowflake.com/en/user-guide/dynamic-tables-incremental)
 
 ## Monitoring Dynamic Tables
 Duration: 6
@@ -520,6 +606,13 @@ FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLES())
 WHERE DATEDIFF('minute', LAST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) > 
       EXTRACT(MINUTE FROM TARGET_LAG) * 2;
 ```
+
+### 📚 Dodatkowe zasoby
+
+- [Monitoring Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh-history)
+- [Information Schema Views](https://docs.snowflake.com/en/sql-reference/info-schema#dynamic-table-functions)
+- [Query Performance Optimization](https://docs.snowflake.com/en/user-guide/ui-query-profile)
+- [Cost Monitoring](https://docs.snowflake.com/en/user-guide/cost-understanding-overall)
 
 ## Conclusion
 Duration: 2

@@ -53,6 +53,9 @@
 <li>Podstawowa znajomość SQL</li>
 <li>Uprawnienia do tworzenia obiektów w bazie danych</li>
 </ul>
+<h2 is-upgraded>📥 Kompletny skrypt SQL</h2>
+<p>Wszystkie polecenia SQL z tego quickstartu są dostępne w jednym pliku: <a href="./mbank-snowflake-quickstart-complete.sql" target="_blank"><strong>📁 mbank-snowflake-quickstart-complete.sql</strong></a></p>
+<p>Możesz pobrać ten plik i wykonywać polecenia sekcja po sekcji, lub skopiować i wkleić poszczególne fragmenty do swojego środowiska Snowflake.</p>
 
 
       </google-codelab-step>
@@ -88,6 +91,12 @@ SHOW DATABASES;
 -- Sprawdzenie schematów
 SHOW SCHEMAS;
 </code></pre>
+<h2 is-upgraded>📚 Dodatkowe zasoby</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/ddl-database" target="_blank">Database Objects Overview</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/ddl-schema" target="_blank">Schema Management</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql-all" target="_blank">SQL Commands Reference</a></li>
+</ul>
 
 
       </google-codelab-step>
@@ -128,6 +137,13 @@ VALUES
 <li>BALANCE (NUMBER(15,2))</li>
 <li>CREATED_DATE (TIMESTAMP_NTZ)</li>
 </ul>
+<h2 is-upgraded>📚 Dodatkowe zasoby</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/create-table" target="_blank">CREATE TABLE</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/data-types" target="_blank">Data Types</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/insert" target="_blank">INSERT Statement</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/tables-intro" target="_blank">Working with Tables</a></li>
+</ul>
 
 
       </google-codelab-step>
@@ -136,22 +152,35 @@ VALUES
         <h2 is-upgraded>Zarządzanie obiektami</h2>
 <p>Snowflake oferuje bogate możliwości zarządzania obiektami bazodanowymi.</p>
 <h2 is-upgraded>Informacje o obiektach</h2>
-<pre><code language="language-sql" class="language-sql">-- Opis obiektu
-DESCRIBE TABLE nazwa_tabeli;
+<pre><code language="language-sql" class="language-sql">-- Opis tabeli MBANK_CUSTOMERS
+DESCRIBE TABLE MBANK_CUSTOMERS;
 
 -- Lista wszystkich tabel
 SHOW TABLES;
 
--- Informacje o kolumnach
-SHOW COLUMNS IN TABLE nazwa_tabeli;
+-- Informacje o kolumnach w tabeli MBANK_CUSTOMERS
+SHOW COLUMNS IN TABLE MBANK_CUSTOMERS;
+
+-- Informacje o tabeli MBANK_ACCOUNTS (jeśli została stworzona)
+DESCRIBE TABLE MBANK_ACCOUNTS;
 </code></pre>
 <h2 is-upgraded>Uprawnienia</h2>
-<pre><code language="language-sql" class="language-sql">-- Przyznawanie uprawnień
-GRANT SELECT ON TABLE nazwa_tabeli TO ROLE rola_użytkownika;
+<pre><code language="language-sql" class="language-sql">-- Przyznawanie uprawnień do tabeli MBANK_CUSTOMERS
+GRANT SELECT ON TABLE MBANK_CUSTOMERS TO ROLE PUBLIC;
 
--- Sprawdzanie uprawnień
-SHOW GRANTS ON TABLE nazwa_tabeli;
+-- Sprawdzanie uprawnień do tabeli MBANK_CUSTOMERS
+SHOW GRANTS ON TABLE MBANK_CUSTOMERS;
+
+-- Przyznawanie uprawnień do tabeli MBANK_ACCOUNTS
+GRANT SELECT ON TABLE MBANK_ACCOUNTS TO ROLE PUBLIC;
 </code></pre>
+<h2 is-upgraded>📚 Dodatkowe zasoby</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/desc-table" target="_blank">DESCRIBE Command</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/show" target="_blank">SHOW Commands</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/security-access-control-overview" target="_blank">Access Control</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/grant-privilege" target="_blank">GRANT Privileges</a></li>
+</ul>
 
 
       </google-codelab-step>
@@ -164,8 +193,13 @@ CREATE TABLE MBANK_PRODUCTS (
     PRODUCT_ID NUMBER(10,0) PRIMARY KEY,
     PRODUCT_NAME VARCHAR(100) NOT NULL,
     PRODUCT_TYPE VARCHAR(50),
-    PRICE NUMBER(10,2) CHECK (PRICE &gt; 0)
+    PRICE NUMBER(10,2)
 );
+
+-- Dodanie CHECK constraint
+ALTER TABLE MBANK_PRODUCTS 
+ADD CONSTRAINT CHK_PRICE_POSITIVE 
+CHECK (PRICE &gt; 0);
 </code></pre>
 <h2 is-upgraded>Foreign Key</h2>
 <pre><code language="language-sql" class="language-sql">-- Dodanie klucza obcego
@@ -185,6 +219,13 @@ CHECK (BALANCE &gt;= 0);
 ALTER TABLE MBANK_CUSTOMERS 
 ALTER COLUMN EMAIL SET NOT NULL;
 </code></pre>
+<h2 is-upgraded>📚 Dodatkowe zasoby</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/constraints-overview" target="_blank">Table Constraints</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/table-considerations#referential-integrity-constraints" target="_blank">Primary and Foreign Keys</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/alter-table" target="_blank">ALTER TABLE</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/constraints-overview#check-constraints" target="_blank">CHECK Constraints</a></li>
+</ul>
 
 
       </google-codelab-step>
@@ -223,6 +264,13 @@ SELECT
 FROM MBANK_ACCOUNTS
 GROUP BY DATE_TRUNC(&#39;DAY&#39;, CREATED_DATE), ACCOUNT_TYPE;
 </code></pre>
+<h2 is-upgraded>📚 Dodatkowe zasoby</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/create-view" target="_blank">CREATE VIEW</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/views-secure" target="_blank">Secure Views</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/views-materialized" target="_blank">Materialized Views</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/views-introduction" target="_blank">Working with Views</a></li>
+</ul>
 
 
       </google-codelab-step>
@@ -249,6 +297,12 @@ LIMIT 5;
 -- Użycie konkretnego ID zapytania
 SELECT * FROM TABLE(RESULT_SCAN(&#39;01234567-89ab-cdef-ghij-klmnopqrstuv&#39;));
 </code></pre>
+<h2 is-upgraded>📚 Dodatkowe zasoby</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/result_scan" target="_blank">RESULT_SCAN Function</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-history" target="_blank">Query History</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/info-schema" target="_blank">Information Schema</a></li>
+</ul>
 
 
       </google-codelab-step>
@@ -283,6 +337,13 @@ SELECT
     TO_DATE(&#39;2024-01-15&#39;, &#39;YYYY-MM-DD&#39;) AS DATE_VALUE,
     TO_VARCHAR(CURRENT_DATE(), &#39;YYYY-MM-DD&#39;) AS STRING_DATE;
 </code></pre>
+<h2 is-upgraded>📚 Dodatkowe zasoby</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions-system" target="_blank">System Functions</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions-date-time" target="_blank">Date and Time Functions</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions-conversion" target="_blank">Conversion Functions</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/functions/current_user" target="_blank">Context Functions</a></li>
+</ul>
 
 
       </google-codelab-step>
@@ -322,6 +383,13 @@ SELECT * FROM TABLE(INFORMATION_SCHEMA.EXTERNAL_TABLE_FILES(
     TABLE_NAME =&gt; &#39;MBANK_EXTERNAL_CUSTOMERS&#39;
 ));
 </code></pre>
+<h2 is-upgraded>📚 Dodatkowe zasoby</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/tables-external-intro" target="_blank">External Tables</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/create-external-table" target="_blank">CREATE EXTERNAL TABLE</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/create-file-format" target="_blank">File Formats</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/data-load-considerations-stage" target="_blank">Stages</a></li>
+</ul>
 
 
       </google-codelab-step>
@@ -374,6 +442,13 @@ SELECT
 FROM MBANK_CUSTOMERS c
 JOIN MBANK_ACCOUNTS a ON c.CUSTOMER_ID = a.CUSTOMER_ID;
 </code></pre>
+<h2 is-upgraded>📚 Dodatkowe zasoby</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-about" target="_blank">Dynamic Tables</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/create-dynamic-table" target="_blank">CREATE DYNAMIC TABLE</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-best-practices" target="_blank">Dynamic Tables Best Practices</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh" target="_blank">Refresh Modes</a></li>
+</ul>
 
 
       </google-codelab-step>
@@ -417,6 +492,13 @@ SELECT ...;
 <li>Monitoruj koszty warehouse</li>
 <li>Optymalizuj zapytania bazowe</li>
 <li>Wykorzystuj partycjonowanie gdzie to możliwe</li>
+</ul>
+<h2 is-upgraded>📚 Dodatkowe zasoby</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-tasks-create" target="_blank">Dynamic Tables Performance</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/cost-understanding-compute" target="_blank">Cost Optimization</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-comparison-tasks" target="_blank">Comparing Dynamic Tables vs Tasks</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-incremental" target="_blank">Incremental Processing</a></li>
 </ul>
 
 
@@ -476,6 +558,13 @@ FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLES())
 WHERE DATEDIFF(&#39;minute&#39;, LAST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) &gt; 
       EXTRACT(MINUTE FROM TARGET_LAG) * 2;
 </code></pre>
+<h2 is-upgraded>📚 Dodatkowe zasoby</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh-history" target="_blank">Monitoring Dynamic Tables</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/info-schema#dynamic-table-functions" target="_blank">Information Schema Views</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/ui-query-profile" target="_blank">Query Performance Optimization</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/cost-understanding-overall" target="_blank">Cost Monitoring</a></li>
+</ul>
 
 
       </google-codelab-step>
