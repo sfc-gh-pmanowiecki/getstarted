@@ -1,0 +1,210 @@
+/* mBank Codelab Custom Styles */
+
+:root {
+  --mbank-primary: #00a651;
+  --mbank-secondary: #004225;
+  --mbank-accent: #ff6b35;
+  --mbank-light: #f8f9fa;
+  --mbank-dark: #333333;
+  --mbank-gradient: linear-gradient(135deg, #00a651 0%, #004225 100%);
+}
+
+/* Header customization */
+#codelab-title {
+  background: var(--mbank-gradient) !important;
+  color: white !important;
+  padding: 2rem;
+  position: relative;
+}
+
+#codelab-title::before {
+  content: '';
+  background-image: url('./mBank_logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: right center;
+  position: absolute;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 120px;
+  height: 60px;
+  opacity: 0.9;
+}
+
+/* Navigation styling */
+#drawer .codelab-nav-buttons {
+  background: var(--mbank-light) !important;
+}
+
+#drawer .codelab-nav-buttons paper-button {
+  background: var(--mbank-primary) !important;
+  color: white !important;
+}
+
+#drawer .codelab-nav-buttons paper-button:hover {
+  background: var(--mbank-secondary) !important;
+}
+
+/* Progress bar */
+#codelab-nav-buttons paper-button[disabled] {
+  background: var(--mbank-accent) !important;
+}
+
+/* Step headers */
+.codelab-step h2 {
+  color: var(--mbank-primary) !important;
+  border-bottom: 2px solid var(--mbank-primary);
+  padding-bottom: 0.5rem;
+}
+
+.codelab-step h3 {
+  color: var(--mbank-secondary) !important;
+}
+
+/* Code blocks */
+.codelab-step pre {
+  background: #f5f5f5 !important;
+  border-left: 4px solid var(--mbank-primary) !important;
+  padding: 1rem !important;
+  border-radius: 4px;
+}
+
+.codelab-step code {
+  background: var(--mbank-light) !important;
+  color: var(--mbank-dark) !important;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+}
+
+/* Checkboxes and interactive elements */
+.codelab-step paper-checkbox {
+  --paper-checkbox-checked-color: var(--mbank-primary);
+  --paper-checkbox-checked-ink-color: var(--mbank-primary);
+}
+
+/* Info boxes */
+.codelab-step aside.positive {
+  background: rgba(0, 166, 81, 0.1) !important;
+  border-left: 4px solid var(--mbank-primary) !important;
+}
+
+.codelab-step aside.negative {
+  background: rgba(255, 107, 53, 0.1) !important;
+  border-left: 4px solid var(--mbank-accent) !important;
+}
+
+.codelab-step aside.warning {
+  background: rgba(255, 193, 7, 0.1) !important;
+  border-left: 4px solid #ffc107 !important;
+}
+
+/* Buttons */
+.codelab-step paper-button {
+  background: var(--mbank-primary) !important;
+  color: white !important;
+  margin: 0.5rem 0;
+}
+
+.codelab-step paper-button:hover {
+  background: var(--mbank-secondary) !important;
+}
+
+/* Tables */
+.codelab-step table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.codelab-step table th {
+  background: var(--mbank-primary) !important;
+  color: white !important;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.codelab-step table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.codelab-step table tr:nth-child(even) {
+  background: var(--mbank-light);
+}
+
+/* Footer */
+#codelab-footer {
+  background: var(--mbank-secondary) !important;
+  color: white !important;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  #codelab-title::before {
+    width: 80px;
+    height: 40px;
+    right: 1rem;
+  }
+}
+
+/* Duration badges */
+.codelab-step-duration {
+  background: var(--mbank-accent) !important;
+  color: white !important;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+/* Enhanced step navigation */
+#drawer .step-title {
+  color: var(--mbank-dark) !important;
+}
+
+#drawer .step-title.current {
+  color: var(--mbank-primary) !important;
+  font-weight: bold;
+}
+
+/* SQL syntax highlighting enhancement */
+.codelab-step pre code.language-sql {
+  color: #333;
+}
+
+.codelab-step pre code.language-sql .keyword {
+  color: var(--mbank-primary);
+  font-weight: bold;
+}
+
+.codelab-step pre code.language-sql .string {
+  color: var(--mbank-accent);
+}
+
+.codelab-step pre code.language-sql .comment {
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Custom mBank branding footer */
+.mbank-footer {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: var(--mbank-gradient);
+  color: white;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.mbank-footer h4 {
+  margin: 0 0 0.5rem 0;
+  color: white;
+}
+
+.mbank-footer p {
+  margin: 0;
+  opacity: 0.9;
+} 

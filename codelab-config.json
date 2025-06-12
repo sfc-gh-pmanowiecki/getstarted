@@ -1,0 +1,132 @@
+{
+  "name": "mBank Snowflake Database Quickstart",
+  "id": "mbank-snowflake-quickstart",
+  "description": "Comprehensive guide to Snowflake database operations for mBank developers",
+  "version": "1.0.0",
+  "author": "mBank Technical Team",
+  "company": "mBank S.A.",
+  "categories": ["snowflake", "database", "sql", "data-warehouse"],
+  "environment": "web",
+  "status": "Published",
+  "language": "pl",
+  "duration": 60,
+  "branding": {
+    "primaryColor": "#00a651",
+    "secondaryColor": "#004225",
+    "accentColor": "#ff6b35",
+    "logo": "mBank_logo.png",
+    "favicon": "mBank_logo.png"
+  },
+  "analytics": {
+    "account": "UA-000000-0",
+    "enabled": false
+  },
+  "feedback": {
+    "enabled": true,
+    "link": "https://github.com/mbank/snowflake-quickstart",
+    "email": "tech-team@mbank.pl"
+  },
+  "prerequisites": [
+    "Dostęp do Snowflake",
+    "Podstawowa znajomość SQL",
+    "Uprawnienia do tworzenia obiektów w bazie danych"
+  ],  
+  "learning_objectives": [
+    "Zrozumienie podstawowych obiektów bazodanowych w Snowflake",
+    "Tworzenie i zarządzanie tabelami i ograniczeniami",
+    "Praca z widokami i funkcjami systemowymi",
+    "Wykorzystanie External Tables i Dynamic Tables",
+    "Monitorowanie i optymalizacja wydajności"
+  ],
+  "sections": [
+    {
+      "title": "Introduction",
+      "duration": 2,
+      "objectives": ["Przegląd kursu", "Wymagania wstępne"]
+    },
+    {
+      "title": "Database Objects and Commands", 
+      "duration": 5,
+      "objectives": ["Podstawowe obiekty", "Komendy DDL"]
+    },
+    {
+      "title": "Objects",
+      "duration": 4,
+      "objectives": ["Zarządzanie obiektami", "Uprawnienia"]
+    },
+    {
+      "title": "Tables",
+      "duration": 8,
+      "objectives": ["Tworzenie tabel", "Typy danych", "DML"]
+    },
+    {
+      "title": "Constraints",
+      "duration": 6,
+      "objectives": ["Primary Key", "Foreign Key", "Check Constraints"]
+    },
+    {
+      "title": "Views",
+      "duration": 5,
+      "objectives": ["Basic Views", "Secure Views", "Materialized Views"]
+    },
+    {
+      "title": "Using the Result_Scan Function",
+      "duration": 4,
+      "objectives": ["RESULT_SCAN", "Query History"]
+    },
+    {
+      "title": "System Functions",
+      "duration": 6,
+      "objectives": ["Funkcje informacyjne", "Funkcje czasowe", "Konwersje"]
+    },
+    {
+      "title": "External Tables",
+      "duration": 7,
+      "objectives": ["Stages", "External Tables", "Refresh"]
+    },
+    {
+      "title": "Dynamic Tables",
+      "duration": 8,
+      "objectives": ["Tworzenie", "Konfiguracja", "Złożone zapytania"]
+    },
+    {
+      "title": "Dynamic Table Advantages",
+      "duration": 5,
+      "objectives": ["Korzyści", "Porównania", "Best Practices"]
+    },
+    {
+      "title": "Monitoring Dynamic Tables",
+      "duration": 6,
+      "objectives": ["Status", "Historia", "Metryki", "Alerting"]
+    },
+    {
+      "title": "Conclusion",
+      "duration": 2,
+      "objectives": ["Podsumowanie", "Następne kroki"]
+    }
+  ],
+  "resources": [
+    {
+      "title": "Snowflake Documentation",
+      "url": "https://docs.snowflake.com/",
+      "type": "documentation"
+    },
+    {
+      "title": "mBank Technical Guidelines",
+      "url": "https://mbank-tech-docs.internal",
+      "type": "internal"
+    },
+    {
+      "title": "SQL Best Practices",
+      "url": "https://best-practices.mbank.internal", 
+      "type": "internal"
+    }
+  ],
+  "build": {
+    "tool": "claat",
+    "sourceFile": "mbank-snowflake-quickstart.md",
+    "outputDir": "mbank-snowflake-quickstart",
+    "customStyles": "mbank-styles.css",
+    "assets": ["mBank_logo.png"]
+  }
+} 
