@@ -25,11 +25,11 @@
   background-position: right center;
   position: absolute;
   right: 2rem;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 1rem;
   width: 120px;
   height: 60px;
   opacity: 0.9;
+  z-index: 1;
 }
 
 /* Navigation styling */
@@ -147,6 +147,7 @@
     width: 80px;
     height: 40px;
     right: 1rem;
+    top: 0.5rem;
   }
 }
 

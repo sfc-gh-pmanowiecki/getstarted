@@ -1,0 +1,506 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>mBank Snowflake Database Quickstart</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="UA-000000-0"
+                  id="snowflake-quickstart"
+                  title="mBank Snowflake Database Quickstart"
+                  environment="web"
+                  feedback-link="https://github.com/pablomano/snowflake-quickstart">
+    
+      <google-codelab-step label="Introduction" duration="2">
+        <h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
+<p>W tym quickstarcie nauczysz się podstawowych konceptów i operacji w Snowflake, które są kluczowe dla pracy z bazami danych w środowisku mBank.</p>
+<p><strong>Tematy, które omówimy:</strong></p>
+<ul>
+<li>Database Objects and Commands</li>
+<li>Objects and Tables</li>
+<li>Constraints and Views</li>
+<li>System Functions</li>
+<li>External and Dynamic Tables</li>
+<li>Monitoring i optymalizacja</li>
+</ul>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Dostęp do Snowflake</li>
+<li>Podstawowa znajomość SQL</li>
+<li>Uprawnienia do tworzenia obiektów w bazie danych</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Database Objects and Commands" duration="5">
+        <h2 is-upgraded>Przegląd obiektów bazodanowych</h2>
+<p>W Snowflake główne obiekty bazodanowe to:</p>
+<ul>
+<li><strong>Databases</strong> - kontener najwyższego poziomu</li>
+<li><strong>Schemas</strong> - logiczne grupowanie obiektów</li>
+<li><strong>Tables</strong> - struktura przechowywania danych</li>
+<li><strong>Views</strong> - wirtualne tabele</li>
+<li><strong>Functions</strong> - programowalne obiekty</li>
+</ul>
+<h2 is-upgraded>Podstawowe komendy</h2>
+<pre><code language="language-sql" class="language-sql">-- Tworzenie bazy danych
+CREATE DATABASE MBANK_DEMO;
+
+-- Używanie bazy danych
+USE DATABASE MBANK_DEMO;
+
+-- Tworzenie schematu
+CREATE SCHEMA QUICKSTART_SCHEMA;
+
+-- Używanie schematu
+USE SCHEMA QUICKSTART_SCHEMA;
+</code></pre>
+<h2 is-upgraded>Ćwiczenie praktyczne</h2>
+<p>Wykonaj poniższe komendy w swojej sesji Snowflake:</p>
+<pre><code language="language-sql" class="language-sql">-- Sprawdzenie dostępnych baz danych
+SHOW DATABASES;
+
+-- Sprawdzenie schematów
+SHOW SCHEMAS;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Objects" duration="4">
+        <h2 is-upgraded>Zarządzanie obiektami</h2>
+<p>Snowflake oferuje bogate możliwości zarządzania obiektami bazodanowymi.</p>
+<h2 is-upgraded>Informacje o obiektach</h2>
+<pre><code language="language-sql" class="language-sql">-- Opis obiektu
+DESCRIBE TABLE nazwa_tabeli;
+
+-- Lista wszystkich tabel
+SHOW TABLES;
+
+-- Informacje o kolumnach
+SHOW COLUMNS IN TABLE nazwa_tabeli;
+</code></pre>
+<h2 is-upgraded>Uprawnienia</h2>
+<pre><code language="language-sql" class="language-sql">-- Przyznawanie uprawnień
+GRANT SELECT ON TABLE nazwa_tabeli TO ROLE rola_użytkownika;
+
+-- Sprawdzanie uprawnień
+SHOW GRANTS ON TABLE nazwa_tabeli;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Tables" duration="8">
+        <h2 is-upgraded>Tworzenie tabel</h2>
+<pre><code language="language-sql" class="language-sql">-- Podstawowa tabela
+CREATE TABLE MBANK_CUSTOMERS (
+    CUSTOMER_ID NUMBER(10,0),
+    FIRST_NAME VARCHAR(50),
+    LAST_NAME VARCHAR(50), 
+    EMAIL VARCHAR(100),
+    PHONE_NUMBER VARCHAR(20),
+    CREATED_DATE TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
+);
+</code></pre>
+<h2 is-upgraded>Typy danych w Snowflake</h2>
+<ul>
+<li><strong>NUMBER</strong> - liczby całkowite i dziesiętne</li>
+<li><strong>VARCHAR</strong> - tekst o zmiennej długości</li>
+<li><strong>TIMESTAMP_NTZ</strong> - znacznik czasu bez strefy czasowej</li>
+<li><strong>BOOLEAN</strong> - wartości true/false</li>
+<li><strong>VARIANT</strong> - dane JSON/semi-strukturalne</li>
+</ul>
+<h2 is-upgraded>Wstawianie danych</h2>
+<pre><code language="language-sql" class="language-sql">INSERT INTO MBANK_CUSTOMERS 
+(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER)
+VALUES 
+(1, &#39;Jan&#39;, &#39;Kowalski&#39;, &#39;jan.kowalski@example.com&#39;, &#39;+48123456789&#39;),
+(2, &#39;Anna&#39;, &#39;Nowak&#39;, &#39;anna.nowak@example.com&#39;, &#39;+48987654321&#39;);
+</code></pre>
+<h2 is-upgraded>Ćwiczenie</h2>
+<p>Stwórz tabelę <code>MBANK_ACCOUNTS</code> z kolumnami:</p>
+<ul>
+<li>ACCOUNT_ID (NUMBER)</li>
+<li>CUSTOMER_ID (NUMBER)</li>
+<li>ACCOUNT_TYPE (VARCHAR)</li>
+<li>BALANCE (NUMBER(15,2))</li>
+<li>CREATED_DATE (TIMESTAMP_NTZ)</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Constraints" duration="6">
+        <h2 is-upgraded>Rodzaje ograniczeń</h2>
+<p>Snowflake wspiera różne typy ograniczeń:</p>
+<pre><code language="language-sql" class="language-sql">-- Primary Key
+CREATE TABLE MBANK_PRODUCTS (
+    PRODUCT_ID NUMBER(10,0) PRIMARY KEY,
+    PRODUCT_NAME VARCHAR(100) NOT NULL,
+    PRODUCT_TYPE VARCHAR(50),
+    PRICE NUMBER(10,2) CHECK (PRICE &gt; 0)
+);
+</code></pre>
+<h2 is-upgraded>Foreign Key</h2>
+<pre><code language="language-sql" class="language-sql">-- Dodanie klucza obcego
+ALTER TABLE MBANK_ACCOUNTS 
+ADD CONSTRAINT FK_CUSTOMER 
+FOREIGN KEY (CUSTOMER_ID) 
+REFERENCES MBANK_CUSTOMERS(CUSTOMER_ID);
+</code></pre>
+<h2 is-upgraded>Check Constraints</h2>
+<pre><code language="language-sql" class="language-sql">-- Sprawdzenie wartości
+ALTER TABLE MBANK_ACCOUNTS 
+ADD CONSTRAINT CHK_BALANCE 
+CHECK (BALANCE &gt;= 0);
+</code></pre>
+<h2 is-upgraded>Not Null</h2>
+<pre><code language="language-sql" class="language-sql">-- Kolumna nie może być pusta
+ALTER TABLE MBANK_CUSTOMERS 
+ALTER COLUMN EMAIL SET NOT NULL;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Views" duration="5">
+        <h2 is-upgraded>Tworzenie widoków</h2>
+<pre><code language="language-sql" class="language-sql">-- Podstawowy widok
+CREATE VIEW CUSTOMER_SUMMARY AS
+SELECT 
+    c.CUSTOMER_ID,
+    c.FIRST_NAME || &#39; &#39; || c.LAST_NAME AS FULL_NAME,
+    c.EMAIL,
+    COUNT(a.ACCOUNT_ID) AS ACCOUNT_COUNT,
+    SUM(a.BALANCE) AS TOTAL_BALANCE
+FROM MBANK_CUSTOMERS c
+LEFT JOIN MBANK_ACCOUNTS a ON c.CUSTOMER_ID = a.CUSTOMER_ID
+GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, c.EMAIL;
+</code></pre>
+<h2 is-upgraded>Secure Views</h2>
+<pre><code language="language-sql" class="language-sql">-- Bezpieczny widok (ukrywa definicję)
+CREATE SECURE VIEW SENSITIVE_CUSTOMER_DATA AS
+SELECT 
+    CUSTOMER_ID,
+    FIRST_NAME,
+    SUBSTR(EMAIL, 1, 3) || &#39;***&#39; AS MASKED_EMAIL
+FROM MBANK_CUSTOMERS;
+</code></pre>
+<h2 is-upgraded>Materialized Views</h2>
+<pre><code language="language-sql" class="language-sql">-- Zmaterializowany widok dla wydajności
+CREATE MATERIALIZED VIEW DAILY_ACCOUNT_SUMMARY AS
+SELECT 
+    DATE_TRUNC(&#39;DAY&#39;, CREATED_DATE) AS ACCOUNT_DATE,
+    ACCOUNT_TYPE,
+    COUNT(*) AS ACCOUNT_COUNT,
+    AVG(BALANCE) AS AVG_BALANCE
+FROM MBANK_ACCOUNTS
+GROUP BY DATE_TRUNC(&#39;DAY&#39;, CREATED_DATE), ACCOUNT_TYPE;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Using the Result_Scan Function" duration="4">
+        <h2 is-upgraded>Funkcja RESULT_SCAN</h2>
+<p>RESULT_SCAN pozwala na wykorzystanie wyników poprzedniego zapytania:</p>
+<pre><code language="language-sql" class="language-sql">-- Pierwsze zapytanie
+SELECT CUSTOMER_ID, TOTAL_BALANCE 
+FROM CUSTOMER_SUMMARY 
+WHERE TOTAL_BALANCE &gt; 10000;
+
+-- Wykorzystanie wyników poprzedniego zapytania
+SELECT AVG(TOTAL_BALANCE) AS AVG_HIGH_BALANCE
+FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()));
+</code></pre>
+<h2 is-upgraded>Praktyczne zastosowanie</h2>
+<pre><code language="language-sql" class="language-sql">-- Zapytanie z identyfikatorem
+SELECT QUERY_ID, QUERY_TEXT 
+FROM TABLE(INFORMATION_SCHEMA.QUERY_HISTORY()) 
+WHERE QUERY_TEXT ILIKE &#39;%MBANK_CUSTOMERS%&#39; 
+LIMIT 5;
+
+-- Użycie konkretnego ID zapytania
+SELECT * FROM TABLE(RESULT_SCAN(&#39;01234567-89ab-cdef-ghij-klmnopqrstuv&#39;));
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="System Functions" duration="6">
+        <h2 is-upgraded>Funkcje informacyjne</h2>
+<pre><code language="language-sql" class="language-sql">-- Aktualna wersja Snowflake
+SELECT CURRENT_VERSION();
+
+-- Aktualny użytkownik i rola
+SELECT CURRENT_USER(), CURRENT_ROLE();
+
+-- Aktualny warehouse i baza danych
+SELECT CURRENT_WAREHOUSE(), CURRENT_DATABASE();
+</code></pre>
+<h2 is-upgraded>Funkcje czasowe</h2>
+<pre><code language="language-sql" class="language-sql">-- Aktualna data i czas
+SELECT 
+    CURRENT_TIMESTAMP() AS CURRENT_TS,
+    CURRENT_DATE() AS CURRENT_DATE,
+    CURRENT_TIME() AS CURRENT_TIME;
+
+-- Operacje na datach
+SELECT 
+    DATEADD(&#39;day&#39;, 30, CURRENT_DATE()) AS FUTURE_DATE,
+    DATEDIFF(&#39;day&#39;, &#39;2024-01-01&#39;, CURRENT_DATE()) AS DAYS_SINCE_NY;
+</code></pre>
+<h2 is-upgraded>Funkcje konwersji</h2>
+<pre><code language="language-sql" class="language-sql">-- Konwersje typów
+SELECT 
+    TO_NUMBER(&#39;123.45&#39;) AS NUM_VALUE,
+    TO_DATE(&#39;2024-01-15&#39;, &#39;YYYY-MM-DD&#39;) AS DATE_VALUE,
+    TO_VARCHAR(CURRENT_DATE(), &#39;YYYY-MM-DD&#39;) AS STRING_DATE;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="External Tables" duration="7">
+        <h2 is-upgraded>Tworzenie External Table</h2>
+<pre><code language="language-sql" class="language-sql">-- Tworzenie stage dla zewnętrznych danych
+CREATE OR REPLACE STAGE MBANK_EXTERNAL_STAGE
+URL = &#39;s3://mbank-data-bucket/customer-data/&#39;
+CREDENTIALS = (AWS_KEY_ID = &#39;your-key&#39; AWS_SECRET_KEY = &#39;your-secret&#39;);
+
+-- External table dla plików CSV
+CREATE OR REPLACE EXTERNAL TABLE MBANK_EXTERNAL_CUSTOMERS (
+    CUSTOMER_ID NUMBER AS (VALUE:c1::NUMBER),
+    FIRST_NAME VARCHAR AS (VALUE:c2::VARCHAR),
+    LAST_NAME VARCHAR AS (VALUE:c3::VARCHAR),
+    EMAIL VARCHAR AS (VALUE:c4::VARCHAR)
+)
+LOCATION = @MBANK_EXTERNAL_STAGE
+FILE_FORMAT = (TYPE = &#39;CSV&#39; SKIP_HEADER = 1);
+</code></pre>
+<h2 is-upgraded>Zapytania do External Tables</h2>
+<pre><code language="language-sql" class="language-sql">-- Podstawowe zapytanie
+SELECT * FROM MBANK_EXTERNAL_CUSTOMERS LIMIT 10;
+
+-- Filtrowanie
+SELECT FIRST_NAME, LAST_NAME 
+FROM MBANK_EXTERNAL_CUSTOMERS 
+WHERE EMAIL LIKE &#39;%@mbank.pl&#39;;
+</code></pre>
+<h2 is-upgraded>Refresh External Tables</h2>
+<pre><code language="language-sql" class="language-sql">-- Odświeżenie metadanych
+ALTER EXTERNAL TABLE MBANK_EXTERNAL_CUSTOMERS REFRESH;
+
+-- Sprawdzenie statusu
+SELECT * FROM TABLE(INFORMATION_SCHEMA.EXTERNAL_TABLE_FILES(
+    TABLE_NAME =&gt; &#39;MBANK_EXTERNAL_CUSTOMERS&#39;
+));
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Dynamic Tables" duration="8">
+        <h2 is-upgraded>Tworzenie Dynamic Tables</h2>
+<pre><code language="language-sql" class="language-sql">-- Dynamic table z automatycznym odświeżaniem
+CREATE OR REPLACE DYNAMIC TABLE MBANK_CUSTOMER_METRICS
+TARGET_LAG = &#39;1 hour&#39;
+WAREHOUSE = COMPUTE_WH
+AS
+SELECT 
+    DATE_TRUNC(&#39;hour&#39;, CREATED_DATE) AS HOUR_PERIOD,
+    COUNT(*) AS NEW_CUSTOMERS,
+    COUNT(DISTINCT CUSTOMER_ID) AS UNIQUE_CUSTOMERS
+FROM MBANK_CUSTOMERS
+GROUP BY DATE_TRUNC(&#39;hour&#39;, CREATED_DATE);
+</code></pre>
+<h2 is-upgraded>Konfiguracja odświeżania</h2>
+<pre><code language="language-sql" class="language-sql">-- Dynamic table z różnymi opcjami LAG
+CREATE OR REPLACE DYNAMIC TABLE MBANK_ACCOUNT_SUMMARY
+TARGET_LAG = &#39;15 minutes&#39;
+WAREHOUSE = COMPUTE_WH
+AS
+SELECT 
+    ACCOUNT_TYPE,
+    COUNT(*) AS ACCOUNT_COUNT,
+    SUM(BALANCE) AS TOTAL_BALANCE,
+    AVG(BALANCE) AS AVG_BALANCE,
+    MAX(BALANCE) AS MAX_BALANCE
+FROM MBANK_ACCOUNTS
+GROUP BY ACCOUNT_TYPE;
+</code></pre>
+<h2 is-upgraded>Złożone Dynamic Tables</h2>
+<pre><code language="language-sql" class="language-sql">-- Dynamic table z join&#39;ami
+CREATE OR REPLACE DYNAMIC TABLE MBANK_CUSTOMER_ACCOUNT_VIEW
+TARGET_LAG = &#39;30 minutes&#39;
+WAREHOUSE = COMPUTE_WH
+AS
+SELECT 
+    c.CUSTOMER_ID,
+    c.FIRST_NAME || &#39; &#39; || c.LAST_NAME AS FULL_NAME,
+    a.ACCOUNT_TYPE,
+    a.BALANCE,
+    CASE 
+        WHEN a.BALANCE &gt;= 100000 THEN &#39;VIP&#39;
+        WHEN a.BALANCE &gt;= 50000 THEN &#39;PREMIUM&#39;
+        ELSE &#39;STANDARD&#39;
+    END AS CUSTOMER_TIER
+FROM MBANK_CUSTOMERS c
+JOIN MBANK_ACCOUNTS a ON c.CUSTOMER_ID = a.CUSTOMER_ID;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Dynamic Table Advantages" duration="5">
+        <h2 is-upgraded>Korzyści z Dynamic Tables</h2>
+<p><strong>1. Automatyczne odświeżanie</strong></p>
+<ul>
+<li>Dane zawsze aktualne bez manualnej interwencji</li>
+<li>Optymalizacja kosztów przez inteligentne odświeżanie</li>
+</ul>
+<p><strong>2. Wydajność</strong></p>
+<ul>
+<li>Materializowane wyniki dla szybkich zapytań</li>
+<li>Incremental processing</li>
+</ul>
+<p><strong>3. Prostota zarządzania</strong></p>
+<ul>
+<li>Automatyczne zarządzanie cyklem życia</li>
+<li>Brak potrzeby tworzenia scheduled jobs</li>
+</ul>
+<h2 is-upgraded>Porównanie z tradycyjnymi rozwiązaniami</h2>
+<pre><code language="language-sql" class="language-sql">-- Tradycyjne podejście - scheduled task
+CREATE OR REPLACE TASK REFRESH_SUMMARY_TASK
+WAREHOUSE = COMPUTE_WH
+SCHEDULE = &#39;60 MINUTE&#39;
+AS
+INSERT OVERWRITE INTO CUSTOMER_SUMMARY_TABLE 
+SELECT ...;
+
+-- Dynamic Table - automatyczne
+CREATE OR REPLACE DYNAMIC TABLE CUSTOMER_SUMMARY_DT
+TARGET_LAG = &#39;1 hour&#39;
+WAREHOUSE = COMPUTE_WH
+AS
+SELECT ...;
+</code></pre>
+<h2 is-upgraded>Best Practices</h2>
+<ul>
+<li>Używaj odpowiedniego TARGET_LAG dla potrzeb biznesowych</li>
+<li>Monitoruj koszty warehouse</li>
+<li>Optymalizuj zapytania bazowe</li>
+<li>Wykorzystuj partycjonowanie gdzie to możliwe</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Monitoring Dynamic Tables" duration="6">
+        <h2 is-upgraded>Sprawdzanie statusu Dynamic Tables</h2>
+<pre><code language="language-sql" class="language-sql">-- Status wszystkich dynamic tables
+SHOW DYNAMIC TABLES;
+
+-- Szczegółowe informacje
+SELECT 
+    NAME,
+    DATABASE_NAME,
+    SCHEMA_NAME,
+    TARGET_LAG,
+    WAREHOUSE,
+    REFRESH_MODE,
+    LAST_DATA_TIMESTAMP
+FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLES());
+</code></pre>
+<h2 is-upgraded>Historia odświeżania</h2>
+<pre><code language="language-sql" class="language-sql">-- Historia odświeżania Dynamic Table
+SELECT 
+    TABLE_NAME,
+    REFRESH_START_TIME,
+    REFRESH_END_TIME,
+    REFRESH_TRIGGER,
+    BYTES_PROCESSED,
+    ROWS_PRODUCED
+FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY(
+    &#39;MBANK_CUSTOMER_METRICS&#39;
+))
+ORDER BY REFRESH_START_TIME DESC;
+</code></pre>
+<h2 is-upgraded>Metryki wydajności</h2>
+<pre><code language="language-sql" class="language-sql">-- Analiza kosztów i wydajności
+SELECT 
+    DATE_TRUNC(&#39;day&#39;, REFRESH_START_TIME) AS REFRESH_DATE,
+    COUNT(*) AS REFRESH_COUNT,
+    SUM(BYTES_PROCESSED) AS TOTAL_BYTES,
+    AVG(DATEDIFF(&#39;second&#39;, REFRESH_START_TIME, REFRESH_END_TIME)) AS AVG_DURATION_SEC
+FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY(
+    &#39;MBANK_CUSTOMER_METRICS&#39;
+))
+WHERE REFRESH_START_TIME &gt;= DATEADD(&#39;day&#39;, -7, CURRENT_TIMESTAMP())
+GROUP BY DATE_TRUNC(&#39;day&#39;, REFRESH_START_TIME)
+ORDER BY REFRESH_DATE;
+</code></pre>
+<h2 is-upgraded>Alerting i monitoring</h2>
+<pre><code language="language-sql" class="language-sql">-- Sprawdzenie opóźnień w odświeżaniu
+SELECT 
+    NAME,
+    TARGET_LAG,
+    DATEDIFF(&#39;minute&#39;, LAST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) AS ACTUAL_LAG_MINUTES
+FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLES())
+WHERE DATEDIFF(&#39;minute&#39;, LAST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) &gt; 
+      EXTRACT(MINUTE FROM TARGET_LAG) * 2;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="2">
+        <h2 is-upgraded>Podsumowanie</h2>
+<p>Gratulacje! Ukończyłeś mBank Snowflake Database Quickstart. Teraz znasz:</p>
+<p>✅ <strong>Database Objects and Commands</strong> - podstawowe obiekty i komendy ✅ <strong>Objects i Tables</strong> - zarządzanie tabelami i obiektami<br> ✅ <strong>Constraints i Views</strong> - ograniczenia i widoki ✅ <strong>System Functions</strong> - funkcje systemowe Snowflake ✅ <strong>External Tables</strong> - integracja z zewnętrznymi źródłami danych ✅ <strong>Dynamic Tables</strong> - automatycznie odświeżane tabele ✅ <strong>Monitoring</strong> - śledzenie wydajności i kosztów</p>
+<h2 is-upgraded>Następne kroki</h2>
+<ol type="1">
+<li>Eksploruj zaawansowane funkcje Snowflake</li>
+<li>Zaimplementuj rozwiązania w swoim środowisku</li>
+<li>Zoptymalizuj wydajność zapytań</li>
+<li>Skonfiguruj monitoring i alerting</li>
+</ol>
+<h2 is-upgraded>Dodatkowe zasoby</h2>
+<ul>
+<li><a href="https://docs.snowflake.com/" target="_blank">Snowflake Documentation</a></li>
+<li><a href="https://mbank-tech-docs.internal" target="_blank">mBank Technical Guidelines</a></li>
+<li><a href="https://best-practices.mbank.internal" target="_blank">SQL Best Practices</a></li>
+</ul>
+<p>Dziękujemy za uczestnictwo w mBank Snowflake Quickstart! 🎉</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
