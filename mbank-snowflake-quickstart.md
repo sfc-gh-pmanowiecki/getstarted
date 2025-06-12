@@ -6,12 +6,12 @@ environments: web
 status: Published
 feedback link: https://github.com/sfc-gh-pmanowiecki/getstarted
 
-# Snowflake Database Quickstart v1.1
+# Snowflake Database Quickstart v1.2
 
 ## Wprowadzenie
 Duration: 5
 
-### What You'll Learn
+### Czego się teraz nauczysz?
 
 W tym quickstarcie nauczysz się podstawowych konceptów i operacji w Snowflake, które są kluczowe dla pracy z bazami danych w środowisku mBank.
 
