@@ -70,36 +70,6 @@ SHOW DATABASES;
 SHOW SCHEMAS;
 ```
 
-## Objects
-Duration: 4
-
-### Zarządzanie obiektami
-
-Snowflake oferuje bogate możliwości zarządzania obiektami bazodanowymi.
-
-### Informacje o obiektach
-
-```sql
--- Opis obiektu
-DESCRIBE TABLE nazwa_tabeli;
-
--- Lista wszystkich tabel
-SHOW TABLES;
-
--- Informacje o kolumnach
-SHOW COLUMNS IN TABLE nazwa_tabeli;
-```
-
-### Uprawnienia
-
-```sql
--- Przyznawanie uprawnień
-GRANT SELECT ON TABLE nazwa_tabeli TO ROLE rola_użytkownika;
-
--- Sprawdzanie uprawnień
-SHOW GRANTS ON TABLE nazwa_tabeli;
-```
-
 ## Tables  
 Duration: 8
 
@@ -143,6 +113,36 @@ Stwórz tabelę `MBANK_ACCOUNTS` z kolumnami:
 - ACCOUNT_TYPE (VARCHAR)
 - BALANCE (NUMBER(15,2))
 - CREATED_DATE (TIMESTAMP_NTZ)
+
+## Objects
+Duration: 4
+
+### Zarządzanie obiektami
+
+Snowflake oferuje bogate możliwości zarządzania obiektami bazodanowymi.
+
+### Informacje o obiektach
+
+```sql
+-- Opis obiektu
+DESCRIBE TABLE nazwa_tabeli;
+
+-- Lista wszystkich tabel
+SHOW TABLES;
+
+-- Informacje o kolumnach
+SHOW COLUMNS IN TABLE nazwa_tabeli;
+```
+
+### Uprawnienia
+
+```sql
+-- Przyznawanie uprawnień
+GRANT SELECT ON TABLE nazwa_tabeli TO ROLE rola_użytkownika;
+
+-- Sprawdzanie uprawnień
+SHOW GRANTS ON TABLE nazwa_tabeli;
+```
 
 ## Constraints
 Duration: 6

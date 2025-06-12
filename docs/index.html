@@ -92,30 +92,6 @@ SHOW SCHEMAS;
 
       </google-codelab-step>
     
-      <google-codelab-step label="Objects" duration="4">
-        <h2 is-upgraded>Zarządzanie obiektami</h2>
-<p>Snowflake oferuje bogate możliwości zarządzania obiektami bazodanowymi.</p>
-<h2 is-upgraded>Informacje o obiektach</h2>
-<pre><code language="language-sql" class="language-sql">-- Opis obiektu
-DESCRIBE TABLE nazwa_tabeli;
-
--- Lista wszystkich tabel
-SHOW TABLES;
-
--- Informacje o kolumnach
-SHOW COLUMNS IN TABLE nazwa_tabeli;
-</code></pre>
-<h2 is-upgraded>Uprawnienia</h2>
-<pre><code language="language-sql" class="language-sql">-- Przyznawanie uprawnień
-GRANT SELECT ON TABLE nazwa_tabeli TO ROLE rola_użytkownika;
-
--- Sprawdzanie uprawnień
-SHOW GRANTS ON TABLE nazwa_tabeli;
-</code></pre>
-
-
-      </google-codelab-step>
-    
       <google-codelab-step label="Tables" duration="8">
         <h2 is-upgraded>Tworzenie tabel</h2>
 <pre><code language="language-sql" class="language-sql">-- Podstawowa tabela
@@ -152,6 +128,30 @@ VALUES
 <li>BALANCE (NUMBER(15,2))</li>
 <li>CREATED_DATE (TIMESTAMP_NTZ)</li>
 </ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Objects" duration="4">
+        <h2 is-upgraded>Zarządzanie obiektami</h2>
+<p>Snowflake oferuje bogate możliwości zarządzania obiektami bazodanowymi.</p>
+<h2 is-upgraded>Informacje o obiektach</h2>
+<pre><code language="language-sql" class="language-sql">-- Opis obiektu
+DESCRIBE TABLE nazwa_tabeli;
+
+-- Lista wszystkich tabel
+SHOW TABLES;
+
+-- Informacje o kolumnach
+SHOW COLUMNS IN TABLE nazwa_tabeli;
+</code></pre>
+<h2 is-upgraded>Uprawnienia</h2>
+<pre><code language="language-sql" class="language-sql">-- Przyznawanie uprawnień
+GRANT SELECT ON TABLE nazwa_tabeli TO ROLE rola_użytkownika;
+
+-- Sprawdzanie uprawnień
+SHOW GRANTS ON TABLE nazwa_tabeli;
+</code></pre>
 
 
       </google-codelab-step>
