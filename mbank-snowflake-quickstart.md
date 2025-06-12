@@ -535,31 +535,41 @@ SELECT * FROM TABLE(INFORMATION_SCHEMA.EXTERNAL_TABLE_FILES(
 - [File Formats](https://docs.snowflake.com/en/sql-reference/sql/create-file-format)
 - [Stages](https://docs.snowflake.com/en/user-guide/data-load-considerations-stage)
 
-## Dynamic Tables
-Duration: 15
+## Dynamic Tables - Wprowadzenie
+Duration: 8
 
-### Tworzenie Dynamic Tables
+### Możliwości Dynamic Tables
+
+Dynamic Tables w Snowflake oferują następujące funkcjonalności:
+
+**1. Automatyczne Odświeżanie**
+- Dane są automatycznie aktualizowane zgodnie z TARGET_LAG
+- Inteligentne incremental processing
+- Optymalizacja kosztów przez odświeżanie tylko zmienionych danych
+
+**2. Deklaratywne Podejście**
+- Definicja zapytania SQL zamiast imperatywnych zadań
+- Automatyczne zarządzanie zależnościami między tabelami
+- Simplifikacja architektury ETL/ELT
+
+**3. Wydajność**
+- Materializowane wyniki dla szybkich zapytań
+- Automatyczne tworzenie metadanych i statystyk
+- Optymalizacja execution plans
+
+**4. Monitorowanie i Zarządzanie**
+- Built-in metryki wydajności i kosztów
+- Historia odświeżania i diagnostyka
+- Integracja z system functions
+
+### Przykład Dynamic Table
+
+**ℹ️ Informacja:** Minimalny TARGET_LAG w Snowflake to '1 minute'
 
 ```sql
--- Dynamic table z automatycznym odswiezaniem
-CREATE OR REPLACE DYNAMIC TABLE MBANK_CUSTOMER_METRICS
-TARGET_LAG = '1 hour'
-WAREHOUSE = COMPUTE_WH
-AS
-SELECT 
-    DATE_TRUNC('hour', CREATED_DATE) AS HOUR_PERIOD,
-    COUNT(*) AS NEW_CUSTOMERS,
-    COUNT(DISTINCT CUSTOMER_ID) AS UNIQUE_CUSTOMERS
-FROM MBANK_CUSTOMERS
-GROUP BY DATE_TRUNC('hour', CREATED_DATE);
-```
-
-### Konfiguracja odświeżania
-
-```sql
--- Dynamic table z roznymi opcjami LAG
+-- Dynamic table - agregacja danych kont
 CREATE OR REPLACE DYNAMIC TABLE MBANK_ACCOUNT_SUMMARY
-TARGET_LAG = '15 minutes'
+TARGET_LAG = '1 minute'
 WAREHOUSE = COMPUTE_WH
 AS
 SELECT 
@@ -567,41 +577,32 @@ SELECT
     COUNT(*) AS ACCOUNT_COUNT,
     SUM(BALANCE) AS TOTAL_BALANCE,
     AVG(BALANCE) AS AVG_BALANCE,
-    MAX(BALANCE) AS MAX_BALANCE
+    MAX(BALANCE) AS MAX_BALANCE,
+    MIN(BALANCE) AS MIN_BALANCE
 FROM MBANK_ACCOUNTS
 GROUP BY ACCOUNT_TYPE;
+
+-- Sprawdzenie zawartosci Dynamic Table
+SELECT * FROM MBANK_ACCOUNT_SUMMARY ORDER BY ACCOUNT_TYPE;
 ```
 
-### Złożone Dynamic Tables
+### 📚 Dodatkowe zasoby
 
-```sql
--- Dynamic table z join'ami
-CREATE OR REPLACE DYNAMIC TABLE MBANK_CUSTOMER_ACCOUNT_VIEW
-TARGET_LAG = '30 minutes'
-WAREHOUSE = COMPUTE_WH
-AS
-SELECT 
-    c.CUSTOMER_ID,
-    c.FIRST_NAME || ' ' || c.LAST_NAME AS FULL_NAME,
-    a.ACCOUNT_TYPE,
-    a.BALANCE,
-    CASE 
-        WHEN a.BALANCE >= 100000 THEN 'VIP'
-        WHEN a.BALANCE >= 50000 THEN 'PREMIUM'
-        ELSE 'STANDARD'
-    END AS CUSTOMER_TIER
-FROM MBANK_CUSTOMERS c
-JOIN MBANK_ACCOUNTS a ON c.CUSTOMER_ID = a.CUSTOMER_ID;
-```
+- [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
+- [CREATE DYNAMIC TABLE](https://docs.snowflake.com/en/sql-reference/sql/create-dynamic-table)
+- [Dynamic Tables Best Practices](https://docs.snowflake.com/en/user-guide/dynamic-tables-best-practices)
+- [Refresh Modes](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh)
+
+## Dynamic Tables - Testowanie
+Duration: 12
 
 ### Testowanie Dynamic Tables w akcji
 
 Teraz przetestujemy jak Dynamic Tables reagują na zmiany danych:
 
 ```sql
--- Sprawdzenie aktualnego stanu Dynamic Tables
+-- Sprawdzenie aktualnego stanu Dynamic Table
 SELECT * FROM MBANK_ACCOUNT_SUMMARY ORDER BY ACCOUNT_TYPE;
-SELECT * FROM MBANK_CUSTOMER_METRICS ORDER BY HOUR_PERIOD;
 
 -- Dodanie nowego klienta
 INSERT INTO MBANK_CUSTOMERS 
@@ -609,7 +610,7 @@ INSERT INTO MBANK_CUSTOMERS
 VALUES 
 (11, 'Adam', 'Kowalski', 'adam.kowalski@mbank.pl', '+48444555666');
 
--- Dodanie konta dla nowego klienta
+-- Dodanie kont dla nowego klienta
 INSERT INTO MBANK_ACCOUNTS 
 (ACCOUNT_ID, CUSTOMER_ID, ACCOUNT_TYPE, BALANCE)
 VALUES 
@@ -621,14 +622,9 @@ UPDATE MBANK_ACCOUNTS
 SET BALANCE = 75000.00 
 WHERE ACCOUNT_ID = 1;
 
--- Sprawdzenie zmian w Dynamic Tables po kilku minutach
--- Dynamic Tables odswiezaja sie zgodnie z TARGET_LAG
+-- Sprawdzenie zmian w Dynamic Table po około minucie
+-- Dynamic Table odswiezana zgodnie z TARGET_LAG 1 minute
 SELECT * FROM MBANK_ACCOUNT_SUMMARY ORDER BY ACCOUNT_TYPE;
-SELECT COUNT(*) AS total_customers FROM MBANK_CUSTOMER_METRICS;
-
--- Sprawdzenie czy nowy klient pojawil sie w widoku
-SELECT * FROM MBANK_CUSTOMER_ACCOUNT_VIEW 
-WHERE CUSTOMER_ID = 11;
 
 -- Usuniecie testowych danych
 DELETE FROM MBANK_ACCOUNTS WHERE CUSTOMER_ID = 11;
@@ -639,7 +635,7 @@ UPDATE MBANK_ACCOUNTS
 SET BALANCE = 5000.00 
 WHERE ACCOUNT_ID = 1;
 
--- Ponowne sprawdzenie Dynamic Tables po usunięciu
+-- Ponowne sprawdzenie Dynamic Table po usunieciu
 SELECT * FROM MBANK_ACCOUNT_SUMMARY ORDER BY ACCOUNT_TYPE;
 
 -- OPCJONALNIE: Wymuszenie odswiezenia Dynamic Table (zamiast czekania na TARGET_LAG)
@@ -651,7 +647,7 @@ SELECT
     LAST_DATA_TIMESTAMP,
     DATEDIFF('minute', LAST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) AS MINUTES_SINCE_REFRESH
 FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLES())
-WHERE NAME IN ('MBANK_ACCOUNT_SUMMARY', 'MBANK_CUSTOMER_METRICS');
+WHERE NAME = 'MBANK_ACCOUNT_SUMMARY';
 ```
 
 **💡 Obserwacje podczas testowania:**
@@ -663,10 +659,9 @@ WHERE NAME IN ('MBANK_ACCOUNT_SUMMARY', 'MBANK_CUSTOMER_METRICS');
 
 ### 📚 Dodatkowe zasoby
 
-- [Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-about)
-- [CREATE DYNAMIC TABLE](https://docs.snowflake.com/en/sql-reference/sql/create-dynamic-table)
-- [Dynamic Tables Best Practices](https://docs.snowflake.com/en/user-guide/dynamic-tables-best-practices)
-- [Refresh Modes](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh)
+- [Dynamic Tables Testing](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh)
+- [Monitoring Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh-history)
+- [Information Schema Views](https://docs.snowflake.com/en/sql-reference/info-schema#dynamic-table-functions)
 
 ## Dynamic Table - Zalety
 Duration: 4
@@ -698,7 +693,7 @@ SELECT ...;
 
 -- Dynamic Table - automatyczne
 CREATE OR REPLACE DYNAMIC TABLE CUSTOMER_SUMMARY_DT
-TARGET_LAG = '1 hour'
+TARGET_LAG = '1 minute'
 WAREHOUSE = COMPUTE_WH
 AS
 SELECT ...;
@@ -706,8 +701,8 @@ SELECT ...;
 
 ### Best Practices
 
-- Używaj odpowiedniego TARGET_LAG dla potrzeb biznesowych
-- Monitoruj koszty warehouse
+- Używaj odpowiedniego TARGET_LAG dla potrzeb biznesowych (minimum 1 minute)
+- Monitoruj koszty warehouse - częstsze odświeżanie = wyższe koszty
 - Optymalizuj zapytania bazowe
 - Wykorzystuj partycjonowanie gdzie to możliwe
 
@@ -751,7 +746,7 @@ SELECT
     BYTES_PROCESSED,
     ROWS_PRODUCED
 FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY(
-    'MBANK_CUSTOMER_METRICS'
+    'MBANK_ACCOUNT_SUMMARY'
 ))
 ORDER BY REFRESH_START_TIME DESC;
 ```
@@ -766,7 +761,7 @@ SELECT
     SUM(BYTES_PROCESSED) AS TOTAL_BYTES,
     AVG(DATEDIFF('second', REFRESH_START_TIME, REFRESH_END_TIME)) AS AVG_DURATION_SEC
 FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY(
-    'MBANK_CUSTOMER_METRICS'
+    'MBANK_ACCOUNT_SUMMARY'
 ))
 WHERE REFRESH_START_TIME >= DATEADD('day', -7, CURRENT_TIMESTAMP())
 GROUP BY DATE_TRUNC('day', REFRESH_START_TIME)

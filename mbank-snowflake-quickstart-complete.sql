@@ -331,24 +331,12 @@ SELECT
 -- ALTER EXTERNAL TABLE MBANK_EXTERNAL_CUSTOMERS REFRESH;
 
 -- ===============================================
--- 9. DYNAMIC TABLES
+-- 9. DYNAMIC TABLES - WPROWADZENIE
 -- ===============================================
 
--- Dynamic table z automatycznym odswiezaniem
-CREATE OR REPLACE DYNAMIC TABLE MBANK_CUSTOMER_METRICS
-TARGET_LAG = '1 hour'
-WAREHOUSE = COMPUTE_WH
-AS
-SELECT 
-    DATE_TRUNC('hour', CREATED_DATE) AS HOUR_PERIOD,
-    COUNT(*) AS NEW_CUSTOMERS,
-    COUNT(DISTINCT CUSTOMER_ID) AS UNIQUE_CUSTOMERS
-FROM MBANK_CUSTOMERS
-GROUP BY DATE_TRUNC('hour', CREATED_DATE);
-
--- Dynamic table z roznymi opcjami LAG
+-- Dynamic table - agregacja danych kont
 CREATE OR REPLACE DYNAMIC TABLE MBANK_ACCOUNT_SUMMARY
-TARGET_LAG = '15 minutes'
+TARGET_LAG = '1 minute'
 WAREHOUSE = COMPUTE_WH
 AS
 SELECT 
@@ -356,35 +344,20 @@ SELECT
     COUNT(*) AS ACCOUNT_COUNT,
     SUM(BALANCE) AS TOTAL_BALANCE,
     AVG(BALANCE) AS AVG_BALANCE,
-    MAX(BALANCE) AS MAX_BALANCE
+    MAX(BALANCE) AS MAX_BALANCE,
+    MIN(BALANCE) AS MIN_BALANCE
 FROM MBANK_ACCOUNTS
 GROUP BY ACCOUNT_TYPE;
 
--- Dynamic table z join'ami
-CREATE OR REPLACE DYNAMIC TABLE MBANK_CUSTOMER_ACCOUNT_VIEW
-TARGET_LAG = '30 minutes'
-WAREHOUSE = COMPUTE_WH
-AS
-SELECT 
-    c.CUSTOMER_ID,
-    c.FIRST_NAME || ' ' || c.LAST_NAME AS FULL_NAME,
-    a.ACCOUNT_TYPE,
-    a.BALANCE,
-    CASE 
-        WHEN a.BALANCE >= 100000 THEN 'VIP'
-        WHEN a.BALANCE >= 50000 THEN 'PREMIUM'
-        ELSE 'STANDARD'
-    END AS CUSTOMER_TIER
-FROM MBANK_CUSTOMERS c
-JOIN MBANK_ACCOUNTS a ON c.CUSTOMER_ID = a.CUSTOMER_ID;
-
--- ===============================================
--- 9.1 TESTOWANIE DYNAMIC TABLES W AKCJI
--- ===============================================
-
--- Sprawdzenie aktualnego stanu Dynamic Tables
+-- Sprawdzenie zawartosci Dynamic Table
 SELECT * FROM MBANK_ACCOUNT_SUMMARY ORDER BY ACCOUNT_TYPE;
-SELECT * FROM MBANK_CUSTOMER_METRICS ORDER BY HOUR_PERIOD;
+
+-- ===============================================
+-- 10. DYNAMIC TABLES - TESTOWANIE
+-- ===============================================
+
+-- Sprawdzenie aktualnego stanu Dynamic Table
+SELECT * FROM MBANK_ACCOUNT_SUMMARY ORDER BY ACCOUNT_TYPE;
 
 -- Dodanie nowego klienta
 INSERT INTO MBANK_CUSTOMERS 
@@ -392,7 +365,7 @@ INSERT INTO MBANK_CUSTOMERS
 VALUES 
 (11, 'Adam', 'Kowalski', 'adam.kowalski@mbank.pl', '+48444555666');
 
--- Dodanie konta dla nowego klienta
+-- Dodanie kont dla nowego klienta
 INSERT INTO MBANK_ACCOUNTS 
 (ACCOUNT_ID, CUSTOMER_ID, ACCOUNT_TYPE, BALANCE)
 VALUES 
@@ -404,14 +377,9 @@ UPDATE MBANK_ACCOUNTS
 SET BALANCE = 75000.00 
 WHERE ACCOUNT_ID = 1;
 
--- Sprawdzenie zmian w Dynamic Tables po kilku minutach
--- Dynamic Tables odswiezaja sie zgodnie z TARGET_LAG
+-- Sprawdzenie zmian w Dynamic Table po około minucie
+-- Dynamic Table odswiezana zgodnie z TARGET_LAG 1 minute
 SELECT * FROM MBANK_ACCOUNT_SUMMARY ORDER BY ACCOUNT_TYPE;
-SELECT COUNT(*) AS total_customers FROM MBANK_CUSTOMER_METRICS;
-
--- Sprawdzenie czy nowy klient pojawil sie w widoku
-SELECT * FROM MBANK_CUSTOMER_ACCOUNT_VIEW 
-WHERE CUSTOMER_ID = 11;
 
 -- Usuniecie testowych danych
 DELETE FROM MBANK_ACCOUNTS WHERE CUSTOMER_ID = 11;
@@ -422,7 +390,7 @@ UPDATE MBANK_ACCOUNTS
 SET BALANCE = 5000.00 
 WHERE ACCOUNT_ID = 1;
 
--- Ponowne sprawdzenie Dynamic Tables po usunieciu
+-- Ponowne sprawdzenie Dynamic Table po usunieciu
 SELECT * FROM MBANK_ACCOUNT_SUMMARY ORDER BY ACCOUNT_TYPE;
 
 -- OPCJONALNIE: Wymuszenie odswiezenia Dynamic Table zamiast czekania na TARGET_LAG
@@ -434,10 +402,10 @@ SELECT
     LAST_DATA_TIMESTAMP,
     DATEDIFF('minute', LAST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) AS MINUTES_SINCE_REFRESH
 FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLES())
-WHERE NAME IN ('MBANK_ACCOUNT_SUMMARY', 'MBANK_CUSTOMER_METRICS');
+WHERE NAME = 'MBANK_ACCOUNT_SUMMARY';
 
 -- ===============================================
--- 10. MONITORING DYNAMIC TABLES
+-- 11. DYNAMIC TABLE - MONITOROWANIE
 -- ===============================================
 
 -- Status wszystkich dynamic tables
@@ -463,7 +431,7 @@ SELECT
     BYTES_PROCESSED,
     ROWS_PRODUCED
 FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY(
-    'MBANK_CUSTOMER_METRICS'
+    'MBANK_ACCOUNT_SUMMARY'
 ))
 ORDER BY REFRESH_START_TIME DESC;
 
@@ -474,7 +442,7 @@ SELECT
     SUM(BYTES_PROCESSED) AS TOTAL_BYTES,
     AVG(DATEDIFF('second', REFRESH_START_TIME, REFRESH_END_TIME)) AS AVG_DURATION_SEC
 FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY(
-    'MBANK_CUSTOMER_METRICS'
+    'MBANK_ACCOUNT_SUMMARY'
 ))
 WHERE REFRESH_START_TIME >= DATEADD('day', -7, CURRENT_TIMESTAMP())
 GROUP BY DATE_TRUNC('day', REFRESH_START_TIME)
@@ -494,9 +462,7 @@ WHERE DATEDIFF('minute', LAST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) >
 -- ===============================================
 -- Gratulacje! Wykonales wszystkie polecenia z mBank Snowflake Quickstart
 -- Pamietaj o czyszczeniu zasobow po zakonczeniu cwiczen:
--- DROP DYNAMIC TABLE MBANK_CUSTOMER_METRICS;
 -- DROP DYNAMIC TABLE MBANK_ACCOUNT_SUMMARY;
--- DROP DYNAMIC TABLE MBANK_CUSTOMER_ACCOUNT_VIEW;
 -- DROP MATERIALIZED VIEW DAILY_ACCOUNT_SUMMARY;
 -- DROP VIEW CUSTOMER_SUMMARY;
 -- DROP SECURE VIEW SENSITIVE_CUSTOMER_DATA;
