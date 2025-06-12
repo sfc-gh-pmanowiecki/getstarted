@@ -114,18 +114,62 @@ CREATE TABLE MBANK_CUSTOMERS (
 INSERT INTO MBANK_CUSTOMERS 
 (CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER)
 VALUES 
-(1, 'Jan', 'Kowalski', 'jan.kowalski@example.com', '+48123456789'),
-(2, 'Anna', 'Nowak', 'anna.nowak@example.com', '+48987654321');
+(1, 'Jan', 'Kowalski', 'jan.kowalski@mbank.pl', '+48123456789'),
+(2, 'Anna', 'Nowak', 'anna.nowak@mbank.pl', '+48987654321'),
+(3, 'Piotr', 'Wiśniewski', 'piotr.wisniewski@mbank.pl', '+48555123456'),
+(4, 'Maria', 'Wójcik', 'maria.wojcik@mbank.pl', '+48666789012'),
+(5, 'Tomasz', 'Kowalczyk', 'tomasz.kowalczyk@mbank.pl', '+48777345678'),
+(6, 'Katarzyna', 'Kamińska', 'katarzyna.kaminska@mbank.pl', '+48888901234'),
+(7, 'Michał', 'Lewandowski', 'michal.lewandowski@mbank.pl', '+48999567890'),
+(8, 'Agnieszka', 'Zielińska', 'agnieszka.zielinska@mbank.pl', '+48111234567'),
+(9, 'Paweł', 'Szymański', 'pawel.szymanski@mbank.pl', '+48222890123'),
+(10, 'Monika', 'Dąbrowska', 'monika.dabrowska@mbank.pl', '+48333456789');
 ```
 
-### Ćwiczenie
+### Ćwiczenie - Tabela MBANK_ACCOUNTS
 
-Stwórz tabelę `MBANK_ACCOUNTS` z kolumnami:
-- ACCOUNT_ID (NUMBER)
-- CUSTOMER_ID (NUMBER) 
-- ACCOUNT_TYPE (VARCHAR)
-- BALANCE (NUMBER(15,2))
-- CREATED_DATE (TIMESTAMP_NTZ)
+Stwórz tabelę `MBANK_ACCOUNTS` i wypełnij ją danymi:
+
+```sql
+-- Tworzenie tabeli MBANK_ACCOUNTS
+CREATE TABLE MBANK_ACCOUNTS (
+    ACCOUNT_ID NUMBER(10,0),
+    CUSTOMER_ID NUMBER(10,0),
+    ACCOUNT_TYPE VARCHAR(50),
+    BALANCE NUMBER(15,2),
+    CREATED_DATE TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
+);
+
+-- Wstawianie przykładowych danych
+INSERT INTO MBANK_ACCOUNTS 
+(ACCOUNT_ID, CUSTOMER_ID, ACCOUNT_TYPE, BALANCE)
+VALUES 
+(1, 1, 'CHECKING', 5000.00),
+(2, 1, 'SAVINGS', 15000.00),
+(3, 2, 'CHECKING', 2500.00),
+(4, 2, 'SAVINGS', 8000.00),
+(5, 3, 'CHECKING', 12000.00),
+(6, 4, 'SAVINGS', 25000.00),
+(7, 5, 'CHECKING', 3500.00),
+(8, 6, 'CHECKING', 7500.00),
+(9, 7, 'SAVINGS', 45000.00),
+(10, 8, 'CHECKING', 1200.00),
+(11, 9, 'SAVINGS', 18000.00),
+(12, 10, 'CHECKING', 6800.00);
+
+-- Sprawdzenie danych
+SELECT COUNT(*) AS customer_count FROM MBANK_CUSTOMERS;
+SELECT COUNT(*) AS account_count FROM MBANK_ACCOUNTS;
+
+-- Przegląd danych z joinami
+SELECT 
+    c.FIRST_NAME || ' ' || c.LAST_NAME AS customer_name,
+    a.ACCOUNT_TYPE,
+    a.BALANCE
+FROM MBANK_CUSTOMERS c
+JOIN MBANK_ACCOUNTS a ON c.CUSTOMER_ID = a.CUSTOMER_ID
+ORDER BY c.CUSTOMER_ID, a.ACCOUNT_TYPE;
+```
 
 ### 📚 Dodatkowe zasoby
 

@@ -125,18 +125,58 @@ CREATE TABLE MBANK_CUSTOMERS (
 <pre><code language="language-sql" class="language-sql">INSERT INTO MBANK_CUSTOMERS 
 (CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER)
 VALUES 
-(1, &#39;Jan&#39;, &#39;Kowalski&#39;, &#39;jan.kowalski@example.com&#39;, &#39;+48123456789&#39;),
-(2, &#39;Anna&#39;, &#39;Nowak&#39;, &#39;anna.nowak@example.com&#39;, &#39;+48987654321&#39;);
+(1, &#39;Jan&#39;, &#39;Kowalski&#39;, &#39;jan.kowalski@mbank.pl&#39;, &#39;+48123456789&#39;),
+(2, &#39;Anna&#39;, &#39;Nowak&#39;, &#39;anna.nowak@mbank.pl&#39;, &#39;+48987654321&#39;),
+(3, &#39;Piotr&#39;, &#39;Wiśniewski&#39;, &#39;piotr.wisniewski@mbank.pl&#39;, &#39;+48555123456&#39;),
+(4, &#39;Maria&#39;, &#39;Wójcik&#39;, &#39;maria.wojcik@mbank.pl&#39;, &#39;+48666789012&#39;),
+(5, &#39;Tomasz&#39;, &#39;Kowalczyk&#39;, &#39;tomasz.kowalczyk@mbank.pl&#39;, &#39;+48777345678&#39;),
+(6, &#39;Katarzyna&#39;, &#39;Kamińska&#39;, &#39;katarzyna.kaminska@mbank.pl&#39;, &#39;+48888901234&#39;),
+(7, &#39;Michał&#39;, &#39;Lewandowski&#39;, &#39;michal.lewandowski@mbank.pl&#39;, &#39;+48999567890&#39;),
+(8, &#39;Agnieszka&#39;, &#39;Zielińska&#39;, &#39;agnieszka.zielinska@mbank.pl&#39;, &#39;+48111234567&#39;),
+(9, &#39;Paweł&#39;, &#39;Szymański&#39;, &#39;pawel.szymanski@mbank.pl&#39;, &#39;+48222890123&#39;),
+(10, &#39;Monika&#39;, &#39;Dąbrowska&#39;, &#39;monika.dabrowska@mbank.pl&#39;, &#39;+48333456789&#39;);
 </code></pre>
-<h2 is-upgraded>Ćwiczenie</h2>
-<p>Stwórz tabelę <code>MBANK_ACCOUNTS</code> z kolumnami:</p>
-<ul>
-<li>ACCOUNT_ID (NUMBER)</li>
-<li>CUSTOMER_ID (NUMBER)</li>
-<li>ACCOUNT_TYPE (VARCHAR)</li>
-<li>BALANCE (NUMBER(15,2))</li>
-<li>CREATED_DATE (TIMESTAMP_NTZ)</li>
-</ul>
+<h2 is-upgraded>Ćwiczenie - Tabela MBANK_ACCOUNTS</h2>
+<p>Stwórz tabelę <code>MBANK_ACCOUNTS</code> i wypełnij ją danymi:</p>
+<pre><code language="language-sql" class="language-sql">-- Tworzenie tabeli MBANK_ACCOUNTS
+CREATE TABLE MBANK_ACCOUNTS (
+    ACCOUNT_ID NUMBER(10,0),
+    CUSTOMER_ID NUMBER(10,0),
+    ACCOUNT_TYPE VARCHAR(50),
+    BALANCE NUMBER(15,2),
+    CREATED_DATE TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
+);
+
+-- Wstawianie przykładowych danych
+INSERT INTO MBANK_ACCOUNTS 
+(ACCOUNT_ID, CUSTOMER_ID, ACCOUNT_TYPE, BALANCE)
+VALUES 
+(1, 1, &#39;CHECKING&#39;, 5000.00),
+(2, 1, &#39;SAVINGS&#39;, 15000.00),
+(3, 2, &#39;CHECKING&#39;, 2500.00),
+(4, 2, &#39;SAVINGS&#39;, 8000.00),
+(5, 3, &#39;CHECKING&#39;, 12000.00),
+(6, 4, &#39;SAVINGS&#39;, 25000.00),
+(7, 5, &#39;CHECKING&#39;, 3500.00),
+(8, 6, &#39;CHECKING&#39;, 7500.00),
+(9, 7, &#39;SAVINGS&#39;, 45000.00),
+(10, 8, &#39;CHECKING&#39;, 1200.00),
+(11, 9, &#39;SAVINGS&#39;, 18000.00),
+(12, 10, &#39;CHECKING&#39;, 6800.00);
+
+-- Sprawdzenie danych
+SELECT COUNT(*) AS customer_count FROM MBANK_CUSTOMERS;
+SELECT COUNT(*) AS account_count FROM MBANK_ACCOUNTS;
+
+-- Przegląd danych z joinami
+SELECT 
+    c.FIRST_NAME || &#39; &#39; || c.LAST_NAME AS customer_name,
+    a.ACCOUNT_TYPE,
+    a.BALANCE
+FROM MBANK_CUSTOMERS c
+JOIN MBANK_ACCOUNTS a ON c.CUSTOMER_ID = a.CUSTOMER_ID
+ORDER BY c.CUSTOMER_ID, a.ACCOUNT_TYPE;
+</code></pre>
 <h2 is-upgraded>📚 Dodatkowe zasoby</h2>
 <ul>
 <li><a href="https://docs.snowflake.com/en/sql-reference/sql/create-table" target="_blank">CREATE TABLE</a></li>
