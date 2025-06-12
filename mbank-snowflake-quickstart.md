@@ -6,7 +6,7 @@ environments: web
 status: Published
 feedback link: https://github.com/sfc-gh-pmanowiecki/getstarted
 
-# Snowflake Database Quickstart
+# Snowflake Database Quickstart v1.1
 
 ## Wprowadzenie
 Duration: 5
