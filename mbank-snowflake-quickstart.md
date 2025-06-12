@@ -8,8 +8,8 @@ feedback link: https://github.com/sfc-gh-pmanowiecki/getstarted
 
 # Snowflake Database Quickstart
 
-## Introduction
-Duration: 2
+## Wprowadzenie
+Duration: 3
 
 ### What You'll Learn
 
@@ -36,8 +36,8 @@ Wszystkie polecenia SQL z tego quickstartu są dostępne w jednym pliku:
 
 Możesz pobrać ten plik i wykonywać polecenia sekcja po sekcji, lub skopiować i wkleić poszczególne fragmenty do swojego środowiska Snowflake.
 
-## Database Objects and Commands
-Duration: 5
+## Obiekty bazodanowe
+Duration: 6
 
 ### Przegląd obiektów bazodanowych
 
@@ -84,7 +84,7 @@ SHOW SCHEMAS;
 - [SQL Commands Reference](https://docs.snowflake.com/en/sql-reference/sql-all)
 
 ## Tables  
-Duration: 8
+Duration: 12
 
 ### Tworzenie tabel
 
@@ -179,7 +179,7 @@ ORDER BY c.CUSTOMER_ID, a.ACCOUNT_TYPE;
 - [Working with Tables](https://docs.snowflake.com/en/user-guide/tables-intro)
 
 ## Objects
-Duration: 4
+Duration: 5
 
 ### Zarządzanie obiektami
 
@@ -222,7 +222,7 @@ GRANT SELECT ON TABLE MBANK_ACCOUNTS TO ROLE PUBLIC;
 - [GRANT Privileges](https://docs.snowflake.com/en/sql-reference/sql/grant-privilege)
 
 ## Constraints
-Duration: 6
+Duration: 8
 
 ### Obsługiwane typy ograniczeń w Snowflake
 
@@ -291,7 +291,7 @@ WHERE TABLE_SCHEMA = 'QUICKSTART_SCHEMA';
 - [Referential Integrity](https://docs.snowflake.com/en/user-guide/table-considerations#referential-integrity-constraints)
 
 ## Views
-Duration: 5
+Duration: 10
 
 ### Tworzenie widoków
 
@@ -307,6 +307,11 @@ SELECT
 FROM MBANK_CUSTOMERS c
 LEFT JOIN MBANK_ACCOUNTS a ON c.CUSTOMER_ID = a.CUSTOMER_ID
 GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, c.EMAIL;
+
+-- Testowanie widoku
+SELECT * FROM CUSTOMER_SUMMARY 
+WHERE TOTAL_BALANCE > 10000 
+ORDER BY TOTAL_BALANCE DESC;
 ```
 
 ### Secure Views
@@ -319,6 +324,24 @@ SELECT
     FIRST_NAME,
     SUBSTR(EMAIL, 1, 3) || '***' AS MASKED_EMAIL
 FROM MBANK_CUSTOMERS;
+
+-- Sprawdzenie definicji widoku (będzie ukryta)
+DESCRIBE VIEW SENSITIVE_CUSTOMER_DATA;
+
+-- Próba podglądu definicji - będzie zabroniona!
+SELECT GET_DDL('VIEW', 'SENSITIVE_CUSTOMER_DATA');
+-- Błąd: Access to DDL for secure view 'SENSITIVE_CUSTOMER_DATA' is restricted
+
+-- Porównanie z zwykłym widokiem (to działa)
+SELECT GET_DDL('VIEW', 'CUSTOMER_SUMMARY');
+
+-- Sprawdzenie typu widoku
+SHOW VIEWS LIKE '%CUSTOMER%';
+-- Kolumna 'is_secure' pokaże 'true' dla secure view
+
+-- Testowanie secure view
+SELECT * FROM SENSITIVE_CUSTOMER_DATA 
+ORDER BY CUSTOMER_ID;
 ```
 
 ### Materialized Views
@@ -333,6 +356,15 @@ SELECT
     AVG(BALANCE) AS AVG_BALANCE
 FROM MBANK_ACCOUNTS
 GROUP BY DATE_TRUNC('DAY', CREATED_DATE), ACCOUNT_TYPE;
+
+-- Testowanie materialized view
+SELECT 
+    ACCOUNT_DATE,
+    ACCOUNT_TYPE,
+    ACCOUNT_COUNT,
+    ROUND(AVG_BALANCE, 2) AS AVG_BALANCE
+FROM DAILY_ACCOUNT_SUMMARY 
+ORDER BY ACCOUNT_DATE, ACCOUNT_TYPE;
 ```
 
 ### 📚 Dodatkowe zasoby
@@ -342,7 +374,7 @@ GROUP BY DATE_TRUNC('DAY', CREATED_DATE), ACCOUNT_TYPE;
 - [Materialized Views](https://docs.snowflake.com/en/user-guide/views-materialized)
 - [Working with Views](https://docs.snowflake.com/en/user-guide/views-introduction)
 
-## Using the Result_Scan Function
+## Używanie funkcji Result_Scan
 Duration: 4
 
 ### Funkcja RESULT_SCAN
@@ -380,7 +412,7 @@ SELECT * FROM TABLE(RESULT_SCAN('01234567-89ab-cdef-ghij-klmnopqrstuv'));
 - [Information Schema](https://docs.snowflake.com/en/sql-reference/info-schema)
 
 ## System Functions
-Duration: 6
+Duration: 5
 
 ### Funkcje informacyjne
 
@@ -428,17 +460,31 @@ SELECT
 - [Context Functions](https://docs.snowflake.com/en/sql-reference/functions/current_user)
 
 ## External Tables
-Duration: 7
+Duration: 6
 
 ### Tworzenie External Table
 
 ```sql
--- Tworzenie stage dla zewnętrznych danych
+-- UWAGA: Wymagane są uprawnienia do Azure Storage Account
+-- Opcja 1: Używanie SAS Token (mniej bezpieczne)
 CREATE OR REPLACE STAGE MBANK_EXTERNAL_STAGE
-URL = 's3://mbank-data-bucket/customer-data/'
-CREDENTIALS = (AWS_KEY_ID = 'your-key' AWS_SECRET_KEY = 'your-secret');
+URL = 'azure://mbankstorageacct.blob.core.windows.net/customer-data/'
+CREDENTIALS = (AZURE_SAS_TOKEN = 'your-sas-token');
 
--- External table dla plików CSV
+-- Opcja 2: Używanie Storage Integration (rekomendowane)
+-- Najpierw stwórz Storage Integration:
+-- CREATE STORAGE INTEGRATION AZURE_INTEGRATION
+--   TYPE = EXTERNAL_STAGE
+--   STORAGE_PROVIDER = AZURE
+--   ENABLED = TRUE
+--   AZURE_TENANT_ID = 'your-tenant-id'
+--   STORAGE_ALLOWED_LOCATIONS = ('azure://mbankstorageacct.blob.core.windows.net/customer-data/');
+
+CREATE OR REPLACE STAGE MBANK_EXTERNAL_STAGE
+URL = 'azure://mbankstorageacct.blob.core.windows.net/customer-data/'
+STORAGE_INTEGRATION = AZURE_INTEGRATION;
+
+-- External table dla plików CSV z Azure
 CREATE OR REPLACE EXTERNAL TABLE MBANK_EXTERNAL_CUSTOMERS (
     CUSTOMER_ID NUMBER AS (VALUE:c1::NUMBER),
     FIRST_NAME VARCHAR AS (VALUE:c2::VARCHAR),
@@ -459,6 +505,15 @@ SELECT * FROM MBANK_EXTERNAL_CUSTOMERS LIMIT 10;
 SELECT FIRST_NAME, LAST_NAME 
 FROM MBANK_EXTERNAL_CUSTOMERS 
 WHERE EMAIL LIKE '%@mbank.pl';
+
+-- Sprawdzenie metadanych plików Azure
+SELECT 
+    FILE_NAME,
+    FILE_SIZE,
+    LAST_MODIFIED
+FROM TABLE(INFORMATION_SCHEMA.EXTERNAL_TABLE_FILES(
+    TABLE_NAME => 'MBANK_EXTERNAL_CUSTOMERS'
+));
 ```
 
 ### Refresh External Tables
@@ -481,7 +536,7 @@ SELECT * FROM TABLE(INFORMATION_SCHEMA.EXTERNAL_TABLE_FILES(
 - [Stages](https://docs.snowflake.com/en/user-guide/data-load-considerations-stage)
 
 ## Dynamic Tables
-Duration: 8
+Duration: 10
 
 ### Tworzenie Dynamic Tables
 
@@ -546,8 +601,8 @@ JOIN MBANK_ACCOUNTS a ON c.CUSTOMER_ID = a.CUSTOMER_ID;
 - [Dynamic Tables Best Practices](https://docs.snowflake.com/en/user-guide/dynamic-tables-best-practices)
 - [Refresh Modes](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh)
 
-## Dynamic Table Advantages
-Duration: 5
+## Dynamic Table - Zalety
+Duration: 4
 
 ### Korzyści z Dynamic Tables
 
@@ -596,8 +651,8 @@ SELECT ...;
 - [Comparing Dynamic Tables vs Tasks](https://docs.snowflake.com/en/user-guide/dynamic-tables-comparison-tasks)
 - [Incremental Processing](https://docs.snowflake.com/en/user-guide/dynamic-tables-incremental)
 
-## Monitoring Dynamic Tables
-Duration: 6
+## Dynamic Table - Monitorowanie
+Duration: 7
 
 ### Sprawdzanie statusu Dynamic Tables
 
@@ -671,7 +726,7 @@ WHERE DATEDIFF('minute', LAST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) >
 - [Query Performance Optimization](https://docs.snowflake.com/en/user-guide/ui-query-profile)
 - [Cost Monitoring](https://docs.snowflake.com/en/user-guide/cost-understanding-overall)
 
-## Conclusion
+## Podsumowanie
 Duration: 2
 
 ### Podsumowanie

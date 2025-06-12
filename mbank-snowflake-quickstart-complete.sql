@@ -57,7 +57,7 @@ VALUES
 
 -- Tworzenie tabeli MBANK_ACCOUNTS
 CREATE TABLE MBANK_ACCOUNTS (
-    ACCOUNT_ID NUMBER(10,0),
+    ACCOUNT_ID NUMBER(10,0) PRIMARY KEY,
     CUSTOMER_ID NUMBER(10,0),
     ACCOUNT_TYPE VARCHAR(50),
     BALANCE NUMBER(15,2),
@@ -173,6 +173,11 @@ FROM MBANK_CUSTOMERS c
 LEFT JOIN MBANK_ACCOUNTS a ON c.CUSTOMER_ID = a.CUSTOMER_ID
 GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, c.EMAIL;
 
+-- Testowanie widoku
+SELECT * FROM CUSTOMER_SUMMARY 
+WHERE TOTAL_BALANCE > 10000 
+ORDER BY TOTAL_BALANCE DESC;
+
 -- Bezpieczny widok (ukrywa definicję)
 CREATE SECURE VIEW SENSITIVE_CUSTOMER_DATA AS
 SELECT 
@@ -180,6 +185,24 @@ SELECT
     FIRST_NAME,
     SUBSTR(EMAIL, 1, 3) || '***' AS MASKED_EMAIL
 FROM MBANK_CUSTOMERS;
+
+-- Sprawdzenie definicji widoku (będzie ukryta)
+DESCRIBE VIEW SENSITIVE_CUSTOMER_DATA;
+
+-- Próba podglądu definicji - będzie zabroniona!
+SELECT GET_DDL('VIEW', 'SENSITIVE_CUSTOMER_DATA');
+-- Błąd: Access to DDL for secure view 'SENSITIVE_CUSTOMER_DATA' is restricted
+
+-- Porównanie z zwykłym widokiem (to działa)
+SELECT GET_DDL('VIEW', 'CUSTOMER_SUMMARY');
+
+-- Sprawdzenie typu widoku
+SHOW VIEWS LIKE '%CUSTOMER%';
+-- Kolumna 'is_secure' pokaże 'true' dla secure view
+
+-- Testowanie secure view
+SELECT * FROM SENSITIVE_CUSTOMER_DATA 
+ORDER BY CUSTOMER_ID;
 
 -- Zmaterializowany widok dla wydajności
 CREATE MATERIALIZED VIEW DAILY_ACCOUNT_SUMMARY AS
@@ -190,6 +213,15 @@ SELECT
     AVG(BALANCE) AS AVG_BALANCE
 FROM MBANK_ACCOUNTS
 GROUP BY DATE_TRUNC('DAY', CREATED_DATE), ACCOUNT_TYPE;
+
+-- Testowanie materialized view
+SELECT 
+    ACCOUNT_DATE,
+    ACCOUNT_TYPE,
+    ACCOUNT_COUNT,
+    ROUND(AVG_BALANCE, 2) AS AVG_BALANCE
+FROM DAILY_ACCOUNT_SUMMARY 
+ORDER BY ACCOUNT_DATE, ACCOUNT_TYPE;
 
 -- ===============================================
 -- 6. RESULT_SCAN FUNCTION
@@ -247,15 +279,28 @@ SELECT
 -- 8. EXTERNAL TABLES
 -- ===============================================
 
--- UWAGA: Poniższe przykłady wymagają konfiguracji AWS credentials
--- Dostosuj URL i credentials do swojego środowiska
+-- UWAGA: Poniższe przykłady wymagają konfiguracji Azure credentials
+-- Dostosuj URL i credentials do swojego środowiska Azure
 
--- Tworzenie stage dla zewnętrznych danych
+-- Opcja 1: Używanie SAS Token (mniej bezpieczne)
 -- CREATE OR REPLACE STAGE MBANK_EXTERNAL_STAGE
--- URL = 's3://mbank-data-bucket/customer-data/'
--- CREDENTIALS = (AWS_KEY_ID = 'your-key' AWS_SECRET_KEY = 'your-secret');
+-- URL = 'azure://mbankstorageacct.blob.core.windows.net/customer-data/'
+-- CREDENTIALS = (AZURE_SAS_TOKEN = 'your-sas-token');
 
--- External table dla plików CSV
+-- Opcja 2: Używanie Storage Integration (rekomendowane)
+-- Najpierw stwórz Storage Integration:
+-- CREATE STORAGE INTEGRATION AZURE_INTEGRATION
+--   TYPE = EXTERNAL_STAGE
+--   STORAGE_PROVIDER = AZURE
+--   ENABLED = TRUE
+--   AZURE_TENANT_ID = 'your-tenant-id'
+--   STORAGE_ALLOWED_LOCATIONS = ('azure://mbankstorageacct.blob.core.windows.net/customer-data/');
+
+-- CREATE OR REPLACE STAGE MBANK_EXTERNAL_STAGE
+-- URL = 'azure://mbankstorageacct.blob.core.windows.net/customer-data/'
+-- STORAGE_INTEGRATION = AZURE_INTEGRATION;
+
+-- External table dla plików CSV z Azure
 -- CREATE OR REPLACE EXTERNAL TABLE MBANK_EXTERNAL_CUSTOMERS (
 --     CUSTOMER_ID NUMBER AS (VALUE:c1::NUMBER),
 --     FIRST_NAME VARCHAR AS (VALUE:c2::VARCHAR),
@@ -272,6 +317,15 @@ SELECT
 -- SELECT FIRST_NAME, LAST_NAME 
 -- FROM MBANK_EXTERNAL_CUSTOMERS 
 -- WHERE EMAIL LIKE '%@mbank.pl';
+
+-- Sprawdzenie metadanych plików Azure
+-- SELECT 
+--     FILE_NAME,
+--     FILE_SIZE,
+--     LAST_MODIFIED
+-- FROM TABLE(INFORMATION_SCHEMA.EXTERNAL_TABLE_FILES(
+--     TABLE_NAME => 'MBANK_EXTERNAL_CUSTOMERS'
+-- ));
 
 -- Odświeżenie metadanych
 -- ALTER EXTERNAL TABLE MBANK_EXTERNAL_CUSTOMERS REFRESH;

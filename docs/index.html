@@ -35,7 +35,7 @@
                   environment="web"
                   feedback-link="https://github.com/sfc-gh-pmanowiecki/getstarted">
     
-      <google-codelab-step label="Introduction" duration="2">
+      <google-codelab-step label="Wprowadzenie" duration="3">
         <h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
 <p>W tym quickstarcie nauczysz się podstawowych konceptów i operacji w Snowflake, które są kluczowe dla pracy z bazami danych w środowisku mBank.</p>
 <p><strong>Tematy, które omówimy:</strong></p>
@@ -60,7 +60,7 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Database Objects and Commands" duration="5">
+      <google-codelab-step label="Obiekty bazodanowe" duration="6">
         <h2 is-upgraded>Przegląd obiektów bazodanowych</h2>
 <p>W Snowflake główne obiekty bazodanowe to:</p>
 <ul>
@@ -101,11 +101,11 @@ SHOW SCHEMAS;
 
       </google-codelab-step>
     
-      <google-codelab-step label="Tables" duration="8">
+      <google-codelab-step label="Tables" duration="12">
         <h2 is-upgraded>Tworzenie tabel</h2>
 <pre><code language="language-sql" class="language-sql">-- Podstawowa tabela
 CREATE TABLE MBANK_CUSTOMERS (
-    CUSTOMER_ID NUMBER(10,0),
+    CUSTOMER_ID NUMBER(10,0) PRIMARY KEY,
     FIRST_NAME VARCHAR(50),
     LAST_NAME VARCHAR(50), 
     EMAIL VARCHAR(100),
@@ -140,7 +140,7 @@ VALUES
 <p>Stwórz tabelę <code>MBANK_ACCOUNTS</code> i wypełnij ją danymi:</p>
 <pre><code language="language-sql" class="language-sql">-- Tworzenie tabeli MBANK_ACCOUNTS
 CREATE TABLE MBANK_ACCOUNTS (
-    ACCOUNT_ID NUMBER(10,0),
+    ACCOUNT_ID NUMBER(10,0) PRIMARY KEY,
     CUSTOMER_ID NUMBER(10,0),
     ACCOUNT_TYPE VARCHAR(50),
     BALANCE NUMBER(15,2),
@@ -188,7 +188,7 @@ ORDER BY c.CUSTOMER_ID, a.ACCOUNT_TYPE;
 
       </google-codelab-step>
     
-      <google-codelab-step label="Objects" duration="4">
+      <google-codelab-step label="Objects" duration="5">
         <h2 is-upgraded>Zarządzanie obiektami</h2>
 <p>Snowflake oferuje bogate możliwości zarządzania obiektami bazodanowymi.</p>
 <h2 is-upgraded>Informacje o obiektach</h2>
@@ -225,7 +225,7 @@ GRANT SELECT ON TABLE MBANK_ACCOUNTS TO ROLE PUBLIC;
 
       </google-codelab-step>
     
-      <google-codelab-step label="Constraints" duration="6">
+      <google-codelab-step label="Constraints" duration="8">
         <h2 is-upgraded>Obsługiwane typy ograniczeń w Snowflake</h2>
 <p>Snowflake obsługuje tylko następujące typy ograniczeń zgodnie ze standardem ANSI SQL:</p>
 <ul>
@@ -290,7 +290,7 @@ WHERE TABLE_SCHEMA = &#39;QUICKSTART_SCHEMA&#39;;
 
       </google-codelab-step>
     
-      <google-codelab-step label="Views" duration="5">
+      <google-codelab-step label="Views" duration="10">
         <h2 is-upgraded>Tworzenie widoków</h2>
 <pre><code language="language-sql" class="language-sql">-- Podstawowy widok
 CREATE VIEW CUSTOMER_SUMMARY AS
@@ -303,6 +303,11 @@ SELECT
 FROM MBANK_CUSTOMERS c
 LEFT JOIN MBANK_ACCOUNTS a ON c.CUSTOMER_ID = a.CUSTOMER_ID
 GROUP BY c.CUSTOMER_ID, c.FIRST_NAME, c.LAST_NAME, c.EMAIL;
+
+-- Testowanie widoku
+SELECT * FROM CUSTOMER_SUMMARY 
+WHERE TOTAL_BALANCE &gt; 10000 
+ORDER BY TOTAL_BALANCE DESC;
 </code></pre>
 <h2 is-upgraded>Secure Views</h2>
 <pre><code language="language-sql" class="language-sql">-- Bezpieczny widok (ukrywa definicję)
@@ -312,6 +317,24 @@ SELECT
     FIRST_NAME,
     SUBSTR(EMAIL, 1, 3) || &#39;***&#39; AS MASKED_EMAIL
 FROM MBANK_CUSTOMERS;
+
+-- Sprawdzenie definicji widoku (będzie ukryta)
+DESCRIBE VIEW SENSITIVE_CUSTOMER_DATA;
+
+-- Próba podglądu definicji - będzie zabroniona!
+SELECT GET_DDL(&#39;VIEW&#39;, &#39;SENSITIVE_CUSTOMER_DATA&#39;);
+-- Błąd: Access to DDL for secure view &#39;SENSITIVE_CUSTOMER_DATA&#39; is restricted
+
+-- Porównanie z zwykłym widokiem (to działa)
+SELECT GET_DDL(&#39;VIEW&#39;, &#39;CUSTOMER_SUMMARY&#39;);
+
+-- Sprawdzenie typu widoku
+SHOW VIEWS LIKE &#39;%CUSTOMER%&#39;;
+-- Kolumna &#39;is_secure&#39; pokaże &#39;true&#39; dla secure view
+
+-- Testowanie secure view
+SELECT * FROM SENSITIVE_CUSTOMER_DATA 
+ORDER BY CUSTOMER_ID;
 </code></pre>
 <h2 is-upgraded>Materialized Views</h2>
 <pre><code language="language-sql" class="language-sql">-- Zmaterializowany widok dla wydajności
@@ -323,6 +346,15 @@ SELECT
     AVG(BALANCE) AS AVG_BALANCE
 FROM MBANK_ACCOUNTS
 GROUP BY DATE_TRUNC(&#39;DAY&#39;, CREATED_DATE), ACCOUNT_TYPE;
+
+-- Testowanie materialized view
+SELECT 
+    ACCOUNT_DATE,
+    ACCOUNT_TYPE,
+    ACCOUNT_COUNT,
+    ROUND(AVG_BALANCE, 2) AS AVG_BALANCE
+FROM DAILY_ACCOUNT_SUMMARY 
+ORDER BY ACCOUNT_DATE, ACCOUNT_TYPE;
 </code></pre>
 <h2 is-upgraded>📚 Dodatkowe zasoby</h2>
 <ul>
@@ -335,7 +367,7 @@ GROUP BY DATE_TRUNC(&#39;DAY&#39;, CREATED_DATE), ACCOUNT_TYPE;
 
       </google-codelab-step>
     
-      <google-codelab-step label="Using the Result_Scan Function" duration="4">
+      <google-codelab-step label="Używanie funkcji Result_Scan" duration="4">
         <h2 is-upgraded>Funkcja RESULT_SCAN</h2>
 <p>RESULT_SCAN pozwala na wykorzystanie wyników poprzedniego zapytania:</p>
 <pre><code language="language-sql" class="language-sql">-- Pierwsze zapytanie
@@ -367,7 +399,7 @@ SELECT * FROM TABLE(RESULT_SCAN(&#39;01234567-89ab-cdef-ghij-klmnopqrstuv&#39;))
 
       </google-codelab-step>
     
-      <google-codelab-step label="System Functions" duration="6">
+      <google-codelab-step label="System Functions" duration="5">
         <h2 is-upgraded>Funkcje informacyjne</h2>
 <pre><code language="language-sql" class="language-sql">-- Aktualna wersja Snowflake
 SELECT CURRENT_VERSION();
@@ -408,14 +440,28 @@ SELECT
 
       </google-codelab-step>
     
-      <google-codelab-step label="External Tables" duration="7">
+      <google-codelab-step label="External Tables" duration="6">
         <h2 is-upgraded>Tworzenie External Table</h2>
-<pre><code language="language-sql" class="language-sql">-- Tworzenie stage dla zewnętrznych danych
+<pre><code language="language-sql" class="language-sql">-- UWAGA: Wymagane są uprawnienia do Azure Storage Account
+-- Opcja 1: Używanie SAS Token (mniej bezpieczne)
 CREATE OR REPLACE STAGE MBANK_EXTERNAL_STAGE
-URL = &#39;s3://mbank-data-bucket/customer-data/&#39;
-CREDENTIALS = (AWS_KEY_ID = &#39;your-key&#39; AWS_SECRET_KEY = &#39;your-secret&#39;);
+URL = &#39;azure://mbankstorageacct.blob.core.windows.net/customer-data/&#39;
+CREDENTIALS = (AZURE_SAS_TOKEN = &#39;your-sas-token&#39;);
 
--- External table dla plików CSV
+-- Opcja 2: Używanie Storage Integration (rekomendowane)
+-- Najpierw stwórz Storage Integration:
+-- CREATE STORAGE INTEGRATION AZURE_INTEGRATION
+--   TYPE = EXTERNAL_STAGE
+--   STORAGE_PROVIDER = AZURE
+--   ENABLED = TRUE
+--   AZURE_TENANT_ID = &#39;your-tenant-id&#39;
+--   STORAGE_ALLOWED_LOCATIONS = (&#39;azure://mbankstorageacct.blob.core.windows.net/customer-data/&#39;);
+
+CREATE OR REPLACE STAGE MBANK_EXTERNAL_STAGE
+URL = &#39;azure://mbankstorageacct.blob.core.windows.net/customer-data/&#39;
+STORAGE_INTEGRATION = AZURE_INTEGRATION;
+
+-- External table dla plików CSV z Azure
 CREATE OR REPLACE EXTERNAL TABLE MBANK_EXTERNAL_CUSTOMERS (
     CUSTOMER_ID NUMBER AS (VALUE:c1::NUMBER),
     FIRST_NAME VARCHAR AS (VALUE:c2::VARCHAR),
@@ -433,6 +479,15 @@ SELECT * FROM MBANK_EXTERNAL_CUSTOMERS LIMIT 10;
 SELECT FIRST_NAME, LAST_NAME 
 FROM MBANK_EXTERNAL_CUSTOMERS 
 WHERE EMAIL LIKE &#39;%@mbank.pl&#39;;
+
+-- Sprawdzenie metadanych plików Azure
+SELECT 
+    FILE_NAME,
+    FILE_SIZE,
+    LAST_MODIFIED
+FROM TABLE(INFORMATION_SCHEMA.EXTERNAL_TABLE_FILES(
+    TABLE_NAME =&gt; &#39;MBANK_EXTERNAL_CUSTOMERS&#39;
+));
 </code></pre>
 <h2 is-upgraded>Refresh External Tables</h2>
 <pre><code language="language-sql" class="language-sql">-- Odświeżenie metadanych
@@ -454,7 +509,7 @@ SELECT * FROM TABLE(INFORMATION_SCHEMA.EXTERNAL_TABLE_FILES(
 
       </google-codelab-step>
     
-      <google-codelab-step label="Dynamic Tables" duration="8">
+      <google-codelab-step label="Dynamic Tables" duration="10">
         <h2 is-upgraded>Tworzenie Dynamic Tables</h2>
 <pre><code language="language-sql" class="language-sql">-- Dynamic table z automatycznym odświeżaniem
 CREATE OR REPLACE DYNAMIC TABLE MBANK_CUSTOMER_METRICS
@@ -513,7 +568,7 @@ JOIN MBANK_ACCOUNTS a ON c.CUSTOMER_ID = a.CUSTOMER_ID;
 
       </google-codelab-step>
     
-      <google-codelab-step label="Dynamic Table Advantages" duration="5">
+      <google-codelab-step label="Dynamic Table - Zalety" duration="4">
         <h2 is-upgraded>Korzyści z Dynamic Tables</h2>
 <p><strong>1. Automatyczne odświeżanie</strong></p>
 <ul>
@@ -564,7 +619,7 @@ SELECT ...;
 
       </google-codelab-step>
     
-      <google-codelab-step label="Monitoring Dynamic Tables" duration="6">
+      <google-codelab-step label="Dynamic Table - Monitorowanie" duration="7">
         <h2 is-upgraded>Sprawdzanie statusu Dynamic Tables</h2>
 <pre><code language="language-sql" class="language-sql">-- Status wszystkich dynamic tables
 SHOW DYNAMIC TABLES;
@@ -629,7 +684,7 @@ WHERE DATEDIFF(&#39;minute&#39;, LAST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) &gt;
 
       </google-codelab-step>
     
-      <google-codelab-step label="Conclusion" duration="2">
+      <google-codelab-step label="Podsumowanie" duration="2">
         <h2 is-upgraded>Podsumowanie</h2>
 <p>Gratulacje! Ukończyłeś mBank Snowflake Database Quickstart. Teraz znasz:</p>
 <p>✅ <strong>Database Objects and Commands</strong> - podstawowe obiekty i komendy ✅ <strong>Objects i Tables</strong> - zarządzanie tabelami i obiektami<br> ✅ <strong>Constraints i Views</strong> - ograniczenia i widoki ✅ <strong>System Functions</strong> - funkcje systemowe Snowflake ✅ <strong>External Tables</strong> - integracja z zewnętrznymi źródłami danych ✅ <strong>Dynamic Tables</strong> - automatycznie odświeżane tabele ✅ <strong>Monitoring</strong> - śledzenie wydajności i kosztów</p>
