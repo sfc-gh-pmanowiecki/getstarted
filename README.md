@@ -119,15 +119,3 @@ export PATH=$PATH:$(go env GOPATH)/bin
 1. Sprawdź czy `mbank-styles.css` jest skopiowany
 2. Sprawdź czy link do CSS jest w HTML
 3. Wyczyść cache przeglądarki
-
-## 📱 Wsparcie
-
-W przypadku problemów skontaktuj się z zespołem technicznym mBank.
-
-## 📄 Licencja
-
-© 2024 mBank S.A. Wszystkie prawa zastrzeżone.
-
----
-
-**Powered by Google Codelabs & mBank Technology Team** 🚀 
