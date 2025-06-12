@@ -186,9 +186,28 @@ GRANT SELECT ON TABLE MBANK_ACCOUNTS TO ROLE PUBLIC;
       </google-codelab-step>
     
       <google-codelab-step label="Constraints" duration="6">
-        <h2 is-upgraded>Rodzaje ograniczeń</h2>
-<p>Snowflake wspiera różne typy ograniczeń:</p>
-<pre><code language="language-sql" class="language-sql">-- Primary Key
+        <h2 is-upgraded>Obsługiwane typy ograniczeń w Snowflake</h2>
+<p>Snowflake obsługuje tylko następujące typy ograniczeń zgodnie ze standardem ANSI SQL:</p>
+<ul>
+<li><strong>PRIMARY KEY</strong> - klucz główny</li>
+<li><strong>FOREIGN KEY</strong> - klucz obcy</li>
+<li><strong>UNIQUE</strong> - unikatowość wartości</li>
+<li><strong>NOT NULL</strong> - wymagana wartość (nie null)</li>
+</ul>
+<h2 is-upgraded>Ważne ograniczenia funkcjonalności</h2>
+<p><strong>Dla standardowych tabel:</strong></p>
+<ul>
+<li>Ograniczenia są <strong>zdefiniowane ale NIE egzekwowane</strong> (oprócz NOT NULL)</li>
+<li>Służą głównie do celów dokumentacji i kompatybilności z narzędziami BI</li>
+<li>Zapewnienie integralności danych jest odpowiedzialnością aplikacji</li>
+</ul>
+<p><strong>Dla tabel hybrydowych:</strong></p>
+<ul>
+<li>Wszystkie ograniczenia są w pełni egzekwowane</li>
+<li>PRIMARY KEY jest wymagany</li>
+</ul>
+<h2 is-upgraded>Przykłady implementacji</h2>
+<pre><code language="language-sql" class="language-sql">-- Primary Key - zawsze NOT NULL i UNIQUE
 CREATE TABLE MBANK_PRODUCTS (
     PRODUCT_ID NUMBER(10,0) PRIMARY KEY,
     PRODUCT_NAME VARCHAR(100) NOT NULL,
@@ -196,35 +215,36 @@ CREATE TABLE MBANK_PRODUCTS (
     PRICE NUMBER(10,2)
 );
 
--- Dodanie CHECK constraint
-ALTER TABLE MBANK_PRODUCTS 
-ADD CONSTRAINT CHK_PRICE_POSITIVE 
-CHECK (PRICE &gt; 0);
-</code></pre>
-<h2 is-upgraded>Foreign Key</h2>
-<pre><code language="language-sql" class="language-sql">-- Dodanie klucza obcego
+-- Foreign Key
 ALTER TABLE MBANK_ACCOUNTS 
 ADD CONSTRAINT FK_CUSTOMER 
 FOREIGN KEY (CUSTOMER_ID) 
 REFERENCES MBANK_CUSTOMERS(CUSTOMER_ID);
-</code></pre>
-<h2 is-upgraded>Check Constraints</h2>
-<pre><code language="language-sql" class="language-sql">-- Sprawdzenie wartości
-ALTER TABLE MBANK_ACCOUNTS 
-ADD CONSTRAINT CHK_BALANCE 
-CHECK (BALANCE &gt;= 0);
-</code></pre>
-<h2 is-upgraded>Not Null</h2>
-<pre><code language="language-sql" class="language-sql">-- Kolumna nie może być pusta
+
+-- Unique constraint
+ALTER TABLE MBANK_CUSTOMERS 
+ADD CONSTRAINT UK_EMAIL UNIQUE (EMAIL);
+
+-- Not Null constraint
 ALTER TABLE MBANK_CUSTOMERS 
 ALTER COLUMN EMAIL SET NOT NULL;
 </code></pre>
+<h2 is-upgraded>Sprawdzanie ograniczeń</h2>
+<pre><code language="language-sql" class="language-sql">-- Informacje o ograniczeniach
+SELECT 
+    CONSTRAINT_NAME,
+    TABLE_NAME,
+    CONSTRAINT_TYPE,
+    ENFORCED
+FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+WHERE TABLE_SCHEMA = &#39;QUICKSTART_SCHEMA&#39;;
+</code></pre>
 <h2 is-upgraded>📚 Dodatkowe zasoby</h2>
 <ul>
-<li><a href="https://docs.snowflake.com/en/sql-reference/constraints-overview" target="_blank">Table Constraints</a></li>
-<li><a href="https://docs.snowflake.com/en/user-guide/table-considerations#referential-integrity-constraints" target="_blank">Primary and Foreign Keys</a></li>
-<li><a href="https://docs.snowflake.com/en/sql-reference/sql/alter-table" target="_blank">ALTER TABLE</a></li>
-<li><a href="https://docs.snowflake.com/en/sql-reference/constraints-overview#check-constraints" target="_blank">CHECK Constraints</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/constraints-overview" target="_blank">Constraints Overview</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/sql/create-table-constraint" target="_blank">CREATE TABLE CONSTRAINT</a></li>
+<li><a href="https://docs.snowflake.com/en/sql-reference/info-schema/table_constraints" target="_blank">Table Constraints Information Schema</a></li>
+<li><a href="https://docs.snowflake.com/en/user-guide/table-considerations#referential-integrity-constraints" target="_blank">Referential Integrity</a></li>
 </ul>
 
 

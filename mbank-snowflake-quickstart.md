@@ -180,12 +180,30 @@ GRANT SELECT ON TABLE MBANK_ACCOUNTS TO ROLE PUBLIC;
 ## Constraints
 Duration: 6
 
-### Rodzaje ograniczeń
+### Obsługiwane typy ograniczeń w Snowflake
 
-Snowflake wspiera różne typy ograniczeń:
+Snowflake obsługuje tylko następujące typy ograniczeń zgodnie ze standardem ANSI SQL:
+
+- **PRIMARY KEY** - klucz główny
+- **FOREIGN KEY** - klucz obcy  
+- **UNIQUE** - unikatowość wartości
+- **NOT NULL** - wymagana wartość (nie null)
+
+### Ważne ograniczenia funkcjonalności
+
+**Dla standardowych tabel:**
+- Ograniczenia są **zdefiniowane ale NIE egzekwowane** (oprócz NOT NULL)
+- Służą głównie do celów dokumentacji i kompatybilności z narzędziami BI
+- Zapewnienie integralności danych jest odpowiedzialnością aplikacji
+
+**Dla tabel hybrydowych:**
+- Wszystkie ograniczenia są w pełni egzekwowane
+- PRIMARY KEY jest wymagany
+
+### Przykłady implementacji
 
 ```sql
--- Primary Key
+-- Primary Key - zawsze NOT NULL i UNIQUE
 CREATE TABLE MBANK_PRODUCTS (
     PRODUCT_ID NUMBER(10,0) PRIMARY KEY,
     PRODUCT_NAME VARCHAR(100) NOT NULL,
@@ -193,45 +211,40 @@ CREATE TABLE MBANK_PRODUCTS (
     PRICE NUMBER(10,2)
 );
 
--- Dodanie CHECK constraint
-ALTER TABLE MBANK_PRODUCTS 
-ADD CONSTRAINT CHK_PRICE_POSITIVE 
-CHECK (PRICE > 0);
-```
-
-### Foreign Key
-
-```sql
--- Dodanie klucza obcego
+-- Foreign Key
 ALTER TABLE MBANK_ACCOUNTS 
 ADD CONSTRAINT FK_CUSTOMER 
 FOREIGN KEY (CUSTOMER_ID) 
 REFERENCES MBANK_CUSTOMERS(CUSTOMER_ID);
-```
 
-### Check Constraints
+-- Unique constraint
+ALTER TABLE MBANK_CUSTOMERS 
+ADD CONSTRAINT UK_EMAIL UNIQUE (EMAIL);
 
-```sql
--- Sprawdzenie wartości
-ALTER TABLE MBANK_ACCOUNTS 
-ADD CONSTRAINT CHK_BALANCE 
-CHECK (BALANCE >= 0);
-```
-
-### Not Null
-
-```sql
--- Kolumna nie może być pusta
+-- Not Null constraint
 ALTER TABLE MBANK_CUSTOMERS 
 ALTER COLUMN EMAIL SET NOT NULL;
 ```
 
+### Sprawdzanie ograniczeń
+
+```sql
+-- Informacje o ograniczeniach
+SELECT 
+    CONSTRAINT_NAME,
+    TABLE_NAME,
+    CONSTRAINT_TYPE,
+    ENFORCED
+FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+WHERE TABLE_SCHEMA = 'QUICKSTART_SCHEMA';
+```
+
 ### 📚 Dodatkowe zasoby
 
-- [Table Constraints](https://docs.snowflake.com/en/sql-reference/constraints-overview)
-- [Primary and Foreign Keys](https://docs.snowflake.com/en/user-guide/table-considerations#referential-integrity-constraints)
-- [ALTER TABLE](https://docs.snowflake.com/en/sql-reference/sql/alter-table)
-- [CHECK Constraints](https://docs.snowflake.com/en/sql-reference/constraints-overview#check-constraints)
+- [Constraints Overview](https://docs.snowflake.com/en/sql-reference/constraints-overview)
+- [CREATE TABLE CONSTRAINT](https://docs.snowflake.com/en/sql-reference/sql/create-table-constraint)
+- [Table Constraints Information Schema](https://docs.snowflake.com/en/sql-reference/info-schema/table_constraints)
+- [Referential Integrity](https://docs.snowflake.com/en/user-guide/table-considerations#referential-integrity-constraints)
 
 ## Views
 Duration: 5

@@ -93,7 +93,10 @@ GRANT SELECT ON TABLE MBANK_ACCOUNTS TO ROLE PUBLIC;
 -- 4. CONSTRAINTS
 -- ===============================================
 
--- Tabela z ograniczeniami
+-- Snowflake obsługuje tylko: PRIMARY KEY, FOREIGN KEY, UNIQUE, NOT NULL
+-- UWAGA: Dla standardowych tabel constraints nie są egzekwowane (oprócz NOT NULL)
+
+-- Tabela z PRIMARY KEY constraint
 CREATE TABLE MBANK_PRODUCTS (
     PRODUCT_ID NUMBER(10,0) PRIMARY KEY,
     PRODUCT_NAME VARCHAR(100) NOT NULL,
@@ -101,25 +104,28 @@ CREATE TABLE MBANK_PRODUCTS (
     PRICE NUMBER(10,2)
 );
 
--- Dodanie CHECK constraint dla ceny
-ALTER TABLE MBANK_PRODUCTS 
-ADD CONSTRAINT CHK_PRICE_POSITIVE 
-CHECK (PRICE > 0);
-
--- Dodanie klucza obcego
+-- Dodanie FOREIGN KEY constraint
 ALTER TABLE MBANK_ACCOUNTS 
 ADD CONSTRAINT FK_CUSTOMER 
 FOREIGN KEY (CUSTOMER_ID) 
 REFERENCES MBANK_CUSTOMERS(CUSTOMER_ID);
 
--- Sprawdzenie wartości
-ALTER TABLE MBANK_ACCOUNTS 
-ADD CONSTRAINT CHK_BALANCE 
-CHECK (BALANCE >= 0);
+-- Dodanie UNIQUE constraint
+ALTER TABLE MBANK_CUSTOMERS 
+ADD CONSTRAINT UK_EMAIL UNIQUE (EMAIL);
 
--- Kolumna nie może być pusta
+-- NOT NULL constraint
 ALTER TABLE MBANK_CUSTOMERS 
 ALTER COLUMN EMAIL SET NOT NULL;
+
+-- Sprawdzanie informacji o constraints
+SELECT 
+    CONSTRAINT_NAME,
+    TABLE_NAME,
+    CONSTRAINT_TYPE,
+    ENFORCED
+FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+WHERE TABLE_SCHEMA = 'QUICKSTART_SCHEMA';
 
 -- ===============================================
 -- 5. VIEWS
