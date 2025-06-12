@@ -4,8 +4,7 @@ id: snowflake-quickstart
 categories: snowflake,database,sql
 environments: web
 status: Published
-feedback link: https://github.com/pablomano/snowflake-quickstart
-analytics account: UA-000000-0
+feedback link: https://github.com/sfc-gh-pmanowiecki/getstarted
 
 # mBank Snowflake Database Quickstart
 
