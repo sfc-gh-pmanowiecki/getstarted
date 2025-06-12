@@ -63,12 +63,44 @@
       <google-codelab-step label="Obiekty bazodanowe" duration="8">
         <h2 is-upgraded>Przegląd obiektów bazodanowych</h2>
 <p>W Snowflake główne obiekty bazodanowe to:</p>
+<p><strong>Struktura danych:</strong></p>
 <ul>
 <li><strong>Databases</strong> - kontener najwyższego poziomu</li>
 <li><strong>Schemas</strong> - logiczne grupowanie obiektów</li>
-<li><strong>Tables</strong> - struktura przechowywania danych</li>
-<li><strong>Views</strong> - wirtualne tabele</li>
-<li><strong>Functions</strong> - programowalne obiekty</li>
+<li><strong>Tables</strong> - standardowe i external tables</li>
+<li><strong>Views</strong> - wirtualne tabele (standardowe, secure, materialized)</li>
+<li><strong>Dynamic Tables</strong> - automatycznie odświeżane tabele</li>
+<li><strong>Sequences</strong> - generatory unikalnych wartości</li>
+</ul>
+<p><strong>Programowalne obiekty:</strong></p>
+<ul>
+<li><strong>Functions</strong> - funkcje użytkownika (SQL, JavaScript, Python)</li>
+<li><strong>Stored Procedures</strong> - procedury składowane</li>
+<li><strong>Tasks</strong> - zaplanowane zadania automatyzacji</li>
+<li><strong>Streams</strong> - monitorowanie zmian w danych (CDC)</li>
+</ul>
+<p><strong>Ładowanie i integracja danych:</strong></p>
+<ul>
+<li><strong>Stages</strong> - lokalizacje przechowywania plików (internal/external)</li>
+<li><strong>File Formats</strong> - definicje formatów plików (CSV, JSON, Parquet)</li>
+<li><strong>Pipes</strong> - automatyczne ładowanie danych</li>
+</ul>
+<p><strong>Zasoby obliczeniowe:</strong></p>
+<ul>
+<li><strong>Warehouses</strong> - compute resources do wykonywania zapytań</li>
+<li><strong>Resource Monitors</strong> - kontrola kosztów i limitów</li>
+</ul>
+<p><strong>Bezpieczeństwo i dostęp:</strong></p>
+<ul>
+<li><strong>Users</strong> - użytkownicy systemu</li>
+<li><strong>Roles</strong> - role i uprawnienia</li>
+<li><strong>Row Access Policies</strong> - kontrola dostępu na poziomie wierszy</li>
+<li><strong>Column Masking Policies</strong> - maskowanie danych w kolumnach</li>
+</ul>
+<p><strong>Udostępnianie danych:</strong></p>
+<ul>
+<li><strong>Shares</strong> - mechanizm udostępniania danych między kontami</li>
+<li><strong>Secure Data Sharing</strong> - bezpieczne udostępnianie danych</li>
 </ul>
 <h2 is-upgraded>Podstawowe komendy</h2>
 <pre><code language="language-sql" class="language-sql">-- Tworzenie bazy danych

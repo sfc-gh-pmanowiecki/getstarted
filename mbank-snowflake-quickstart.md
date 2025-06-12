@@ -43,11 +43,38 @@ Duration: 8
 
 W Snowflake główne obiekty bazodanowe to:
 
+**Struktura danych:**
 - **Databases** - kontener najwyższego poziomu
 - **Schemas** - logiczne grupowanie obiektów
-- **Tables** - struktura przechowywania danych
-- **Views** - wirtualne tabele
-- **Functions** - programowalne obiekty
+- **Tables** - standardowe i external tables
+- **Views** - wirtualne tabele (standardowe, secure, materialized)
+- **Dynamic Tables** - automatycznie odświeżane tabele
+- **Sequences** - generatory unikalnych wartości
+
+**Programowalne obiekty:**
+- **Functions** - funkcje użytkownika (SQL, JavaScript, Python)
+- **Stored Procedures** - procedury składowane
+- **Tasks** - zaplanowane zadania automatyzacji
+- **Streams** - monitorowanie zmian w danych (CDC)
+
+**Ładowanie i integracja danych:**
+- **Stages** - lokalizacje przechowywania plików (internal/external)
+- **File Formats** - definicje formatów plików (CSV, JSON, Parquet)
+- **Pipes** - automatyczne ładowanie danych
+
+**Zasoby obliczeniowe:**
+- **Warehouses** - compute resources do wykonywania zapytań
+- **Resource Monitors** - kontrola kosztów i limitów
+
+**Bezpieczeństwo i dostęp:**
+- **Users** - użytkownicy systemu
+- **Roles** - role i uprawnienia
+- **Row Access Policies** - kontrola dostępu na poziomie wierszy
+- **Column Masking Policies** - maskowanie danych w kolumnach
+
+**Udostępnianie danych:**
+- **Shares** - mechanizm udostępniania danych między kontami
+- **Secure Data Sharing** - bezpieczne udostępnianie danych
 
 ### Podstawowe komendy
 
