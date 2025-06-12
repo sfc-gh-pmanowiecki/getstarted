@@ -6,7 +6,7 @@ environments: web
 status: Published
 feedback link: https://github.com/sfc-gh-pmanowiecki/getstarted
 
-# mBank Snowflake Database Quickstart
+# Snowflake Database Quickstart
 
 ## Introduction
 Duration: 2

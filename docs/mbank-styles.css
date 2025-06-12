@@ -14,10 +14,11 @@
   background: var(--mbank-gradient) !important;
   color: white !important;
   padding: 2rem;
-  padding-left: 160px;
   position: relative;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+  text-align: left;
 }
 
 #codelab-title::before {
@@ -25,11 +26,11 @@
   background-image: url('./mBank_logo.png');
   background-size: contain;
   background-repeat: no-repeat;
-  background-position: left center;
+  background-position: center center;
   position: absolute;
-  left: 2rem;
+  left: 50%;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
   width: 120px;
   height: 60px;
   opacity: 0.9;
@@ -148,17 +149,16 @@
 /* Responsive design */
 @media (max-width: 768px) {
   #codelab-title {
-    padding-left: 110px;
     padding: 1rem;
-    padding-left: 110px;
+    text-align: left;
   }
   
   #codelab-title::before {
     width: 80px;
     height: 40px;
-    left: 1rem;
+    left: 50%;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
   }
 }
 
