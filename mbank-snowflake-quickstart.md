@@ -728,8 +728,7 @@ SELECT
     DATABASE_NAME,
     SCHEMA_NAME,
     TARGET_LAG_SEC,
-    WAREHOUSE,
-    REFRESH_MODE,
+    SCHEDULING_STATE,
     LATEST_DATA_TIMESTAMP
 FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLES());
 ```
@@ -754,7 +753,7 @@ ORDER BY REFRESH_START_TIME DESC;
 ### Metryki wydajności
 
 ```sql
--- Analiza kosztow i wydajnosci
+-- Analiza wydajnosci odswiezania (ostatnie 7 dni)
 SELECT 
     DATE_TRUNC('day', REFRESH_START_TIME) AS REFRESH_DATE,
     COUNT(*) AS REFRESH_COUNT,
