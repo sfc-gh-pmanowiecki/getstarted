@@ -11,19 +11,19 @@
 -- Tworzenie bazy danych
 CREATE DATABASE MBANK_DEMO;
 
--- Używanie bazy danych
+-- Uzywanie bazy danych
 USE DATABASE MBANK_DEMO;
 
 -- Tworzenie schematu
 CREATE SCHEMA QUICKSTART_SCHEMA;
 
--- Używanie schematu
+-- Uzywanie schematu
 USE SCHEMA QUICKSTART_SCHEMA;
 
--- Sprawdzenie dostępnych baz danych
+-- Sprawdzenie dostepnych baz danych
 SHOW DATABASES;
 
--- Sprawdzenie schematów
+-- Sprawdzenie schematow
 SHOW SCHEMAS;
 
 -- ===============================================
@@ -64,7 +64,7 @@ CREATE TABLE MBANK_ACCOUNTS (
     CREATED_DATE TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
 );
 
--- Wstawianie przykładowych danych do MBANK_ACCOUNTS
+-- Wstawianie przykladowych danych do MBANK_ACCOUNTS
 INSERT INTO MBANK_ACCOUNTS 
 (ACCOUNT_ID, CUSTOMER_ID, ACCOUNT_TYPE, BALANCE)
 VALUES 
@@ -85,7 +85,7 @@ VALUES
 SELECT COUNT(*) AS customer_count FROM MBANK_CUSTOMERS;
 SELECT COUNT(*) AS account_count FROM MBANK_ACCOUNTS;
 
--- Przegląd danych z joinami
+-- Przeglad danych z joinami
 SELECT 
     c.FIRST_NAME || ' ' || c.LAST_NAME AS customer_name,
     a.ACCOUNT_TYPE,
@@ -110,21 +110,21 @@ SHOW COLUMNS IN TABLE MBANK_CUSTOMERS;
 -- Informacje o tabeli MBANK_ACCOUNTS
 DESCRIBE TABLE MBANK_ACCOUNTS;
 
--- Przyznawanie uprawnień do tabeli MBANK_CUSTOMERS
+-- Przyznawanie uprawnien do tabeli MBANK_CUSTOMERS
 GRANT SELECT ON TABLE MBANK_CUSTOMERS TO ROLE PUBLIC;
 
--- Sprawdzanie uprawnień do tabeli MBANK_CUSTOMERS
+-- Sprawdzanie uprawnien do tabeli MBANK_CUSTOMERS
 SHOW GRANTS ON TABLE MBANK_CUSTOMERS;
 
--- Przyznawanie uprawnień do tabeli MBANK_ACCOUNTS
+-- Przyznawanie uprawnien do tabeli MBANK_ACCOUNTS
 GRANT SELECT ON TABLE MBANK_ACCOUNTS TO ROLE PUBLIC;
 
 -- ===============================================
 -- 4. CONSTRAINTS
 -- ===============================================
 
--- Snowflake obsługuje tylko: PRIMARY KEY, FOREIGN KEY, UNIQUE, NOT NULL
--- UWAGA: Dla standardowych tabel constraints nie są egzekwowane (oprócz NOT NULL)
+-- Snowflake obsluguje tylko: PRIMARY KEY, FOREIGN KEY, UNIQUE, NOT NULL
+-- UWAGA: Dla standardowych tabel constraints nie sa egzekwowane oprocz NOT NULL
 
 -- Tabela z PRIMARY KEY constraint
 CREATE TABLE MBANK_PRODUCTS (
@@ -178,7 +178,7 @@ SELECT * FROM CUSTOMER_SUMMARY
 WHERE TOTAL_BALANCE > 10000 
 ORDER BY TOTAL_BALANCE DESC;
 
--- Bezpieczny widok (ukrywa definicję)
+-- Bezpieczny widok ukrywa definicje
 CREATE SECURE VIEW SENSITIVE_CUSTOMER_DATA AS
 SELECT 
     CUSTOMER_ID,
@@ -186,25 +186,25 @@ SELECT
     SUBSTR(EMAIL, 1, 3) || '***' AS MASKED_EMAIL
 FROM MBANK_CUSTOMERS;
 
--- Sprawdzenie definicji widoku (będzie ukryta)
+-- Sprawdzenie definicji widoku bedzie ukryta
 DESCRIBE VIEW SENSITIVE_CUSTOMER_DATA;
 
--- Próba podglądu definicji - będzie zabroniona!
+-- Proba podgladu definicji bedzie zabroniona
 SELECT GET_DDL('VIEW', 'SENSITIVE_CUSTOMER_DATA');
--- Błąd: Access to DDL for secure view 'SENSITIVE_CUSTOMER_DATA' is restricted
+-- Blad: Access to DDL for secure view SENSITIVE_CUSTOMER_DATA is restricted
 
--- Porównanie z zwykłym widokiem (to działa)
+-- Porownanie z zwyklym widokiem to dziala
 SELECT GET_DDL('VIEW', 'CUSTOMER_SUMMARY');
 
 -- Sprawdzenie typu widoku
 SHOW VIEWS LIKE '%CUSTOMER%';
--- Kolumna 'is_secure' pokaże 'true' dla secure view
+-- Kolumna is_secure pokaze true dla secure view
 
 -- Testowanie secure view
 SELECT * FROM SENSITIVE_CUSTOMER_DATA 
 ORDER BY CUSTOMER_ID;
 
--- Zmaterializowany widok dla wydajności
+-- Zmaterializowany widok dla wydajnosci
 CREATE MATERIALIZED VIEW DAILY_ACCOUNT_SUMMARY AS
 SELECT 
     DATE_TRUNC('DAY', CREATED_DATE) AS ACCOUNT_DATE,
@@ -232,7 +232,7 @@ SELECT CUSTOMER_ID, TOTAL_BALANCE
 FROM CUSTOMER_SUMMARY 
 WHERE TOTAL_BALANCE > 10000;
 
--- Wykorzystanie wyników poprzedniego zapytania
+-- Wykorzystanie wynikow poprzedniego zapytania
 SELECT AVG(TOTAL_BALANCE) AS AVG_HIGH_BALANCE
 FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()));
 
@@ -242,7 +242,7 @@ FROM TABLE(INFORMATION_SCHEMA.QUERY_HISTORY())
 WHERE QUERY_TEXT ILIKE '%MBANK_CUSTOMERS%' 
 LIMIT 5;
 
--- Przykład użycia konkretnego ID zapytania (zastąp swoim ID)
+-- Przyklad uzycia konkretnego ID zapytania zastap swoim ID
 -- SELECT * FROM TABLE(RESULT_SCAN('01234567-89ab-cdef-ghij-klmnopqrstuv'));
 
 -- ===============================================
@@ -252,7 +252,7 @@ LIMIT 5;
 -- Aktualna wersja Snowflake
 SELECT CURRENT_VERSION();
 
--- Aktualny użytkownik i rola
+-- Aktualny uzytkownik i rola
 SELECT CURRENT_USER(), CURRENT_ROLE();
 
 -- Aktualny warehouse i baza danych
@@ -269,7 +269,7 @@ SELECT
     DATEADD('day', 30, CURRENT_DATE()) AS FUTURE_DATE,
     DATEDIFF('day', '2024-01-01', CURRENT_DATE()) AS DAYS_SINCE_NY;
 
--- Konwersje typów
+-- Konwersje typow
 SELECT 
     TO_NUMBER('123.45') AS NUM_VALUE,
     TO_DATE('2024-01-15', 'YYYY-MM-DD') AS DATE_VALUE,
@@ -279,28 +279,28 @@ SELECT
 -- 8. EXTERNAL TABLES
 -- ===============================================
 
--- UWAGA: Poniższe przykłady wymagają konfiguracji Azure credentials
--- Dostosuj URL i credentials do swojego środowiska Azure
+-- UWAGA: Ponizsze przyklady wymagaja konfiguracji Azure credentials
+-- Dostosuj URL i credentials do swojego srodowiska Azure
 
--- Opcja 1: Używanie SAS Token (mniej bezpieczne)
+-- Opcja 1: Uzywanie SAS Token mniej bezpieczne
 -- CREATE OR REPLACE STAGE MBANK_EXTERNAL_STAGE
 -- URL = 'azure://mbankstorageacct.blob.core.windows.net/customer-data/'
 -- CREDENTIALS = (AZURE_SAS_TOKEN = 'your-sas-token');
 
--- Opcja 2: Używanie Storage Integration (rekomendowane)
--- Najpierw stwórz Storage Integration:
+-- Opcja 2: Uzywanie Storage Integration rekomendowane
+-- Najpierw stworz Storage Integration:
 -- CREATE STORAGE INTEGRATION AZURE_INTEGRATION
 --   TYPE = EXTERNAL_STAGE
 --   STORAGE_PROVIDER = AZURE
 --   ENABLED = TRUE
 --   AZURE_TENANT_ID = 'your-tenant-id'
---   STORAGE_ALLOWED_LOCATIONS = ('azure://mbankstorageacct.blob.core.windows.net/customer-data/');
+--   STORAGE_ALLOWED_LOCATIONS = 'azure://mbankstorageacct.blob.core.windows.net/customer-data/';
 
 -- CREATE OR REPLACE STAGE MBANK_EXTERNAL_STAGE
 -- URL = 'azure://mbankstorageacct.blob.core.windows.net/customer-data/'
 -- STORAGE_INTEGRATION = AZURE_INTEGRATION;
 
--- External table dla plików CSV z Azure
+-- External table dla plikow CSV z Azure
 -- CREATE OR REPLACE EXTERNAL TABLE MBANK_EXTERNAL_CUSTOMERS (
 --     CUSTOMER_ID NUMBER AS (VALUE:c1::NUMBER),
 --     FIRST_NAME VARCHAR AS (VALUE:c2::VARCHAR),
@@ -318,7 +318,7 @@ SELECT
 -- FROM MBANK_EXTERNAL_CUSTOMERS 
 -- WHERE EMAIL LIKE '%@mbank.pl';
 
--- Sprawdzenie metadanych plików Azure
+-- Sprawdzenie metadanych plikow Azure
 -- SELECT 
 --     FILE_NAME,
 --     FILE_SIZE,
@@ -327,14 +327,14 @@ SELECT
 --     TABLE_NAME => 'MBANK_EXTERNAL_CUSTOMERS'
 -- ));
 
--- Odświeżenie metadanych
+-- Odswiezenie metadanych
 -- ALTER EXTERNAL TABLE MBANK_EXTERNAL_CUSTOMERS REFRESH;
 
 -- ===============================================
 -- 9. DYNAMIC TABLES
 -- ===============================================
 
--- Dynamic table z automatycznym odświeżaniem
+-- Dynamic table z automatycznym odswiezaniem
 CREATE OR REPLACE DYNAMIC TABLE MBANK_CUSTOMER_METRICS
 TARGET_LAG = '1 hour'
 WAREHOUSE = COMPUTE_WH
@@ -346,7 +346,7 @@ SELECT
 FROM MBANK_CUSTOMERS
 GROUP BY DATE_TRUNC('hour', CREATED_DATE);
 
--- Dynamic table z różnymi opcjami LAG
+-- Dynamic table z roznymi opcjami LAG
 CREATE OR REPLACE DYNAMIC TABLE MBANK_ACCOUNT_SUMMARY
 TARGET_LAG = '15 minutes'
 WAREHOUSE = COMPUTE_WH
@@ -385,7 +385,7 @@ JOIN MBANK_ACCOUNTS a ON c.CUSTOMER_ID = a.CUSTOMER_ID;
 -- Status wszystkich dynamic tables
 SHOW DYNAMIC TABLES;
 
--- Szczegółowe informacje
+-- Szczegolowe informacje
 SELECT 
     NAME,
     DATABASE_NAME,
@@ -396,7 +396,7 @@ SELECT
     LAST_DATA_TIMESTAMP
 FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLES());
 
--- Historia odświeżania Dynamic Table
+-- Historia odswiezania Dynamic Table
 SELECT 
     TABLE_NAME,
     REFRESH_START_TIME,
@@ -409,7 +409,7 @@ FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY(
 ))
 ORDER BY REFRESH_START_TIME DESC;
 
--- Analiza kosztów i wydajności
+-- Analiza kosztow i wydajnosci
 SELECT 
     DATE_TRUNC('day', REFRESH_START_TIME) AS REFRESH_DATE,
     COUNT(*) AS REFRESH_COUNT,
@@ -422,7 +422,7 @@ WHERE REFRESH_START_TIME >= DATEADD('day', -7, CURRENT_TIMESTAMP())
 GROUP BY DATE_TRUNC('day', REFRESH_START_TIME)
 ORDER BY REFRESH_DATE;
 
--- Sprawdzenie opóźnień w odświeżaniu
+-- Sprawdzenie opoznien w odswiezaniu
 SELECT 
     NAME,
     TARGET_LAG,
@@ -434,8 +434,8 @@ WHERE DATEDIFF('minute', LAST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) >
 -- ===============================================
 -- KONIEC SKRYPTU
 -- ===============================================
--- Gratulacje! Wykonałeś wszystkie polecenia z mBank Snowflake Quickstart
--- Pamiętaj o czyszczeniu zasobów po zakończeniu ćwiczeń:
+-- Gratulacje! Wykonales wszystkie polecenia z mBank Snowflake Quickstart
+-- Pamietaj o czyszczeniu zasobow po zakonczeniu cwiczen:
 -- DROP DYNAMIC TABLE MBANK_CUSTOMER_METRICS;
 -- DROP DYNAMIC TABLE MBANK_ACCOUNT_SUMMARY;
 -- DROP DYNAMIC TABLE MBANK_CUSTOMER_ACCOUNT_VIEW;
