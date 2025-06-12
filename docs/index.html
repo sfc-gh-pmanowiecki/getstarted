@@ -31,11 +31,11 @@
   <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
   <google-codelab codelab-gaid=""
                   id="snowflake-quickstart"
-                  title="Snowflake Database Quickstart"
+                  title="Snowflake Database Quickstart v1.1"
                   environment="web"
                   feedback-link="https://github.com/sfc-gh-pmanowiecki/getstarted">
     
-      <google-codelab-step label="Wprowadzenie" duration="3">
+      <google-codelab-step label="Wprowadzenie" duration="5">
         <h2 class="checklist" is-upgraded>What You&#39;ll Learn</h2>
 <p>W tym quickstarcie nauczysz się podstawowych konceptów i operacji w Snowflake, które są kluczowe dla pracy z bazami danych w środowisku mBank.</p>
 <p><strong>Tematy, które omówimy:</strong></p>
@@ -54,13 +54,13 @@
 <li>Uprawnienia do tworzenia obiektów w bazie danych</li>
 </ul>
 <h2 is-upgraded>📥 Kompletny skrypt SQL</h2>
-<p>Wszystkie polecenia SQL z tego quickstartu są dostępne w jednym pliku: <a href="./mbank-snowflake-quickstart-complete.sql" target="_blank"><strong>📁 mbank-snowflake-quickstart-complete.sql</strong></a></p>
+<p>Wszystkie polecenia SQL z tego quickstartu są dostępne w jednym pliku: <a href="https://raw.githubusercontent.com/sfc-gh-pmanowiecki/getstarted/refs/heads/main/mbank-snowflake-quickstart-complete.sql" target="_blank"><strong>📁 mbank-snowflake-quickstart-complete.sql</strong></a></p>
 <p>Możesz pobrać ten plik i wykonywać polecenia sekcja po sekcji, lub skopiować i wkleić poszczególne fragmenty do swojego środowiska Snowflake.</p>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Obiekty bazodanowe" duration="6">
+      <google-codelab-step label="Obiekty bazodanowe" duration="8">
         <h2 is-upgraded>Przegląd obiektów bazodanowych</h2>
 <p>W Snowflake główne obiekty bazodanowe to:</p>
 <ul>
@@ -101,7 +101,7 @@ SHOW SCHEMAS;
 
       </google-codelab-step>
     
-      <google-codelab-step label="Tables" duration="12">
+      <google-codelab-step label="Tables" duration="15">
         <h2 is-upgraded>Tworzenie tabel</h2>
 <pre><code language="language-sql" class="language-sql">-- Podstawowa tabela
 CREATE TABLE MBANK_CUSTOMERS (
@@ -188,7 +188,7 @@ ORDER BY c.CUSTOMER_ID, a.ACCOUNT_TYPE;
 
       </google-codelab-step>
     
-      <google-codelab-step label="Objects" duration="5">
+      <google-codelab-step label="Objects" duration="7">
         <h2 is-upgraded>Zarządzanie obiektami</h2>
 <p>Snowflake oferuje bogate możliwości zarządzania obiektami bazodanowymi.</p>
 <h2 is-upgraded>Informacje o obiektach</h2>
@@ -225,7 +225,7 @@ GRANT SELECT ON TABLE MBANK_ACCOUNTS TO ROLE PUBLIC;
 
       </google-codelab-step>
     
-      <google-codelab-step label="Constraints" duration="8">
+      <google-codelab-step label="Constraints" duration="10">
         <h2 is-upgraded>Obsługiwane typy ograniczeń w Snowflake</h2>
 <p>Snowflake obsługuje tylko następujące typy ograniczeń zgodnie ze standardem ANSI SQL:</p>
 <ul>
@@ -290,7 +290,7 @@ WHERE TABLE_SCHEMA = &#39;QUICKSTART_SCHEMA&#39;;
 
       </google-codelab-step>
     
-      <google-codelab-step label="Views" duration="10">
+      <google-codelab-step label="Views" duration="12">
         <h2 is-upgraded>Tworzenie widoków</h2>
 <pre><code language="language-sql" class="language-sql">-- Podstawowy widok
 CREATE VIEW CUSTOMER_SUMMARY AS
@@ -367,7 +367,7 @@ ORDER BY ACCOUNT_DATE, ACCOUNT_TYPE;
 
       </google-codelab-step>
     
-      <google-codelab-step label="Używanie funkcji Result_Scan" duration="4">
+      <google-codelab-step label="Używanie funkcji Result_Scan" duration="6">
         <h2 is-upgraded>Funkcja RESULT_SCAN</h2>
 <p>RESULT_SCAN pozwala na wykorzystanie wyników poprzedniego zapytania:</p>
 <pre><code language="language-sql" class="language-sql">-- Pierwsze zapytanie
@@ -399,7 +399,7 @@ SELECT * FROM TABLE(RESULT_SCAN(&#39;01234567-89ab-cdef-ghij-klmnopqrstuv&#39;))
 
       </google-codelab-step>
     
-      <google-codelab-step label="System Functions" duration="5">
+      <google-codelab-step label="System Functions" duration="6">
         <h2 is-upgraded>Funkcje informacyjne</h2>
 <pre><code language="language-sql" class="language-sql">-- Aktualna wersja Snowflake
 SELECT CURRENT_VERSION();
@@ -440,7 +440,7 @@ SELECT
 
       </google-codelab-step>
     
-      <google-codelab-step label="External Tables" duration="6">
+      <google-codelab-step label="External Tables" duration="10">
         <h2 is-upgraded>Tworzenie External Table</h2>
 <pre><code language="language-sql" class="language-sql">-- UWAGA: Wymagane sa uprawnienia do Azure Storage Account
 -- Opcja 1: Uzywanie SAS Token mniej bezpieczne
@@ -509,7 +509,7 @@ SELECT * FROM TABLE(INFORMATION_SCHEMA.EXTERNAL_TABLE_FILES(
 
       </google-codelab-step>
     
-      <google-codelab-step label="Dynamic Tables - Wprowadzenie" duration="8">
+      <google-codelab-step label="Dynamic Tables - Wprowadzenie" duration="10">
         <h2 is-upgraded>Możliwości Dynamic Tables</h2>
 <p>Dynamic Tables w Snowflake oferują następujące funkcjonalności:</p>
 <p><strong>1. Automatyczne Odświeżanie</strong></p>
@@ -567,7 +567,7 @@ SELECT * FROM MBANK_ACCOUNT_SUMMARY ORDER BY ACCOUNT_TYPE;
 
       </google-codelab-step>
     
-      <google-codelab-step label="Dynamic Tables - Testowanie" duration="12">
+      <google-codelab-step label="Dynamic Tables - Testowanie" duration="15">
         <h2 is-upgraded>Testowanie Dynamic Tables w akcji</h2>
 <p>Teraz przetestujemy jak Dynamic Tables reagują na zmiany danych:</p>
 <pre><code language="language-sql" class="language-sql">-- Sprawdzenie aktualnego stanu Dynamic Table
