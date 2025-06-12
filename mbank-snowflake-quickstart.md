@@ -644,8 +644,8 @@ SELECT * FROM MBANK_ACCOUNT_SUMMARY ORDER BY ACCOUNT_TYPE;
 -- Sprawdzenie czasu ostatniego odswiezenia
 SELECT 
     NAME,
-    LAST_DATA_TIMESTAMP,
-    DATEDIFF('minute', LAST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) AS MINUTES_SINCE_REFRESH
+    LATEST_DATA_TIMESTAMP,
+    DATEDIFF('minute', LATEST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) AS MINUTES_SINCE_REFRESH
 FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLES())
 WHERE NAME = 'MBANK_ACCOUNT_SUMMARY';
 ```
@@ -708,10 +708,10 @@ SELECT ...;
 
 ### 📚 Dodatkowe zasoby
 
-- [Dynamic Tables Performance](https://docs.snowflake.com/en/user-guide/dynamic-tables-tasks-create)
-- [Cost Optimization](https://docs.snowflake.com/en/user-guide/cost-understanding-compute)
-- [Comparing Dynamic Tables vs Tasks](https://docs.snowflake.com/en/user-guide/dynamic-tables-comparison-tasks)
-- [Incremental Processing](https://docs.snowflake.com/en/user-guide/dynamic-tables-incremental)
+- [Creating Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-create)
+- [Cost Considerations](https://docs.snowflake.com/en/user-guide/dynamic-tables-cost)
+- [Dynamic Tables vs Streams & Tasks](https://docs.snowflake.com/en/user-guide/dynamic-tables-comparison)
+- [Performance Optimization](https://docs.snowflake.com/en/user-guide/dynamic-table-performance-guide)
 
 ## Dynamic Table - Monitorowanie
 Duration: 7
@@ -727,10 +727,10 @@ SELECT
     NAME,
     DATABASE_NAME,
     SCHEMA_NAME,
-    TARGET_LAG,
+    TARGET_LAG_SEC,
     WAREHOUSE,
     REFRESH_MODE,
-    LAST_DATA_TIMESTAMP
+    LATEST_DATA_TIMESTAMP
 FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLES());
 ```
 
@@ -739,14 +739,14 @@ FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLES());
 ```sql
 -- Historia odswiezania Dynamic Table
 SELECT 
-    TABLE_NAME,
+    NAME,
     REFRESH_START_TIME,
     REFRESH_END_TIME,
     REFRESH_TRIGGER,
-    BYTES_PROCESSED,
-    ROWS_PRODUCED
+    STATE,
+    STATE_MESSAGE
 FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY(
-    'MBANK_ACCOUNT_SUMMARY'
+    NAME => 'MBANK_ACCOUNT_SUMMARY'
 ))
 ORDER BY REFRESH_START_TIME DESC;
 ```
@@ -783,10 +783,10 @@ WHERE DATEDIFF('minute', LAST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) >
 
 ### 📚 Dodatkowe zasoby
 
-- [Monitoring Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh-history)
-- [Information Schema Views](https://docs.snowflake.com/en/sql-reference/info-schema#dynamic-table-functions)
-- [Query Performance Optimization](https://docs.snowflake.com/en/user-guide/ui-query-profile)
-- [Cost Monitoring](https://docs.snowflake.com/en/user-guide/cost-understanding-overall)
+- [Monitor Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-monitor)
+- [DYNAMIC_TABLES Function](https://docs.snowflake.com/en/sql-reference/functions/dynamic_tables)
+- [DYNAMIC_TABLE_REFRESH_HISTORY](https://docs.snowflake.com/en/sql-reference/functions/dynamic_table_refresh_history)
+- [Information Schema](https://docs.snowflake.com/en/sql-reference/info-schema)
 
 ## Podsumowanie
 Duration: 2
