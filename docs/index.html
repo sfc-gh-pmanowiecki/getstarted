@@ -509,7 +509,7 @@ SELECT * FROM TABLE(INFORMATION_SCHEMA.EXTERNAL_TABLE_FILES(
 
       </google-codelab-step>
     
-      <google-codelab-step label="Dynamic Tables" duration="10">
+      <google-codelab-step label="Dynamic Tables" duration="15">
         <h2 is-upgraded>Tworzenie Dynamic Tables</h2>
 <pre><code language="language-sql" class="language-sql">-- Dynamic table z automatycznym odswiezaniem
 CREATE OR REPLACE DYNAMIC TABLE MBANK_CUSTOMER_METRICS
@@ -557,6 +557,70 @@ SELECT
 FROM MBANK_CUSTOMERS c
 JOIN MBANK_ACCOUNTS a ON c.CUSTOMER_ID = a.CUSTOMER_ID;
 </code></pre>
+<h2 is-upgraded>Testowanie Dynamic Tables w akcji</h2>
+<p>Teraz przetestujemy jak Dynamic Tables reagują na zmiany danych:</p>
+<pre><code language="language-sql" class="language-sql">-- Sprawdzenie aktualnego stanu Dynamic Tables
+SELECT * FROM MBANK_ACCOUNT_SUMMARY ORDER BY ACCOUNT_TYPE;
+SELECT * FROM MBANK_CUSTOMER_METRICS ORDER BY HOUR_PERIOD;
+
+-- Dodanie nowego klienta
+INSERT INTO MBANK_CUSTOMERS 
+(CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER)
+VALUES 
+(11, &#39;Adam&#39;, &#39;Kowalski&#39;, &#39;adam.kowalski@mbank.pl&#39;, &#39;+48444555666&#39;);
+
+-- Dodanie konta dla nowego klienta
+INSERT INTO MBANK_ACCOUNTS 
+(ACCOUNT_ID, CUSTOMER_ID, ACCOUNT_TYPE, BALANCE)
+VALUES 
+(13, 11, &#39;CHECKING&#39;, 15000.00),
+(14, 11, &#39;SAVINGS&#39;, 50000.00);
+
+-- Modyfikacja salda istniejacego konta
+UPDATE MBANK_ACCOUNTS 
+SET BALANCE = 75000.00 
+WHERE ACCOUNT_ID = 1;
+
+-- Sprawdzenie zmian w Dynamic Tables po kilku minutach
+-- Dynamic Tables odswiezaja sie zgodnie z TARGET_LAG
+SELECT * FROM MBANK_ACCOUNT_SUMMARY ORDER BY ACCOUNT_TYPE;
+SELECT COUNT(*) AS total_customers FROM MBANK_CUSTOMER_METRICS;
+
+-- Sprawdzenie czy nowy klient pojawil sie w widoku
+SELECT * FROM MBANK_CUSTOMER_ACCOUNT_VIEW 
+WHERE CUSTOMER_ID = 11;
+
+-- Usuniecie testowych danych
+DELETE FROM MBANK_ACCOUNTS WHERE CUSTOMER_ID = 11;
+DELETE FROM MBANK_CUSTOMERS WHERE CUSTOMER_ID = 11;
+
+-- Cofniecie zmiany salda
+UPDATE MBANK_ACCOUNTS 
+SET BALANCE = 5000.00 
+WHERE ACCOUNT_ID = 1;
+
+-- Ponowne sprawdzenie Dynamic Tables po usunięciu
+SELECT * FROM MBANK_ACCOUNT_SUMMARY ORDER BY ACCOUNT_TYPE;
+
+-- OPCJONALNIE: Wymuszenie odswiezenia Dynamic Table (zamiast czekania na TARGET_LAG)
+-- ALTER DYNAMIC TABLE MBANK_ACCOUNT_SUMMARY REFRESH;
+
+-- Sprawdzenie czasu ostatniego odswiezenia
+SELECT 
+    NAME,
+    LAST_DATA_TIMESTAMP,
+    DATEDIFF(&#39;minute&#39;, LAST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) AS MINUTES_SINCE_REFRESH
+FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLES())
+WHERE NAME IN (&#39;MBANK_ACCOUNT_SUMMARY&#39;, &#39;MBANK_CUSTOMER_METRICS&#39;);
+</code></pre>
+<p><strong>💡 Obserwacje podczas testowania:</strong></p>
+<ul>
+<li>Dynamic Tables odświeżają się automatycznie zgodnie z <code>TARGET_LAG</code></li>
+<li>Zmiany w danych źródłowych są propagowane do Dynamic Tables</li>
+<li>Można wymusić natychmiastowe odświeżanie przez <code>ALTER DYNAMIC TABLE ... REFRESH</code></li>
+<li>Można monitorować proces odświeżania przez <code>INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY()</code></li>
+<li>TARGET_LAG to maksymalny dopuszczalny lag - rzeczywiste odświeżanie może być częstsze</li>
+</ul>
 <h2 is-upgraded>📚 Dodatkowe zasoby</h2>
 <ul>
 <li><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-about" target="_blank">Dynamic Tables</a></li>
