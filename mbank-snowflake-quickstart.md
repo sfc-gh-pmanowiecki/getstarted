@@ -25,7 +25,7 @@ W tym quickstarcie nauczysz się podstawowych konceptów i operacji w Snowflake,
 
 ### Prerequisites
 
-- Dostęp do Snowflake - możesz założyć darmowe konto https://trial.snowflake.com
+- Dostęp do Snowflake - możesz założyć darmowe konto [https://trial.snowflake.com](https://trial.snowflake.com)
 - Podstawowa znajomość SQL
 - Uprawnienia do tworzenia obiektów w bazie danych
 
