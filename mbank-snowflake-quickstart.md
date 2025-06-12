@@ -780,6 +780,38 @@ WHERE DATEDIFF('minute', LATEST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) >
       (TARGET_LAG_SEC / 60) * 2;
 ```
 
+### Monitorowanie przez interfejs Snowsight
+
+**🖥️ Snowsight Web Interface - Monitoring Dynamic Tables:**
+
+1. **Przejdź do zakładki "Data" → "Dynamic Tables"**
+   - Lista wszystkich Dynamic Tables w Twojej bazie danych
+   - Status każdej tabeli (Running, Suspended, Failed)
+   - Ostatni czas odświeżenia i następne planowane odświeżenie
+
+2. **Kliknij na konkretną Dynamic Table aby zobaczyć szczegóły:**
+   - **Overview** - podstawowe informacje o tabeli
+   - **Refresh History** - historia odświeżeń z wizualizacją czasów trwania
+   - **Graph View** - wizualizacja zależności między tabelami
+   - **Query Profile** - szczegółowa analiza wydajności zapytań odświeżających
+
+3. **Refresh History Page - kluczowe funkcje:**
+   - 📊 **Wykres czasów odświeżania** - łatwe wykrywanie anomalii wydajnościowych
+   - 🔍 **Show Query Profile** - szczegółowa analiza każdego odświeżenia
+   - ⚠️ **Source Data Timestamp** - sprawdzenie czy dane są aktualne
+   - ❌ **Failed Refreshes** - identyfikacja problemów z odświeżaniem
+
+4. **Graph View - wizualizacja zależności:**
+   - Pokazuje powiązania między Dynamic Tables
+   - Identyfikuje upstream/downstream dependencies
+   - Pomaga w troubleshooting - failed upstream table blokuje downstream tables
+
+**💡 Praktyczne wskazówki:**
+- Regularnie sprawdzaj Refresh History dla wykrywania trendów wydajnościowych
+- Używaj Query Profile do optymalizacji wolnych odświeżeń
+- Monitoruj Graph View przy złożonych pipeline'ach z wieloma Dynamic Tables
+- Skonfiguruj alerty dla failed refreshes przez Snowsight notifications
+
 ### 📚 Dodatkowe zasoby
 
 - [Monitor Dynamic Tables](https://docs.snowflake.com/en/user-guide/dynamic-tables-monitor)

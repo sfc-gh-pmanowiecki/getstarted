@@ -740,6 +740,43 @@ FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLES())
 WHERE DATEDIFF(&#39;minute&#39;, LATEST_DATA_TIMESTAMP, CURRENT_TIMESTAMP()) &gt; 
       (TARGET_LAG_SEC / 60) * 2;
 </code></pre>
+<h2 is-upgraded>Monitorowanie przez interfejs Snowsight</h2>
+<p><strong>🖥️ Snowsight Web Interface - Monitoring Dynamic Tables:</strong></p>
+<ol type="1">
+<li><strong>Przejdź do zakładki &#34;Data&#34; → &#34;Dynamic Tables&#34;</strong><ul>
+<li>Lista wszystkich Dynamic Tables w Twojej bazie danych</li>
+<li>Status każdej tabeli (Running, Suspended, Failed)</li>
+<li>Ostatni czas odświeżenia i następne planowane odświeżenie</li>
+</ul>
+</li>
+<li><strong>Kliknij na konkretną Dynamic Table aby zobaczyć szczegóły:</strong><ul>
+<li><strong>Overview</strong> - podstawowe informacje o tabeli</li>
+<li><strong>Refresh History</strong> - historia odświeżeń z wizualizacją czasów trwania</li>
+<li><strong>Graph View</strong> - wizualizacja zależności między tabelami</li>
+<li><strong>Query Profile</strong> - szczegółowa analiza wydajności zapytań odświeżających</li>
+</ul>
+</li>
+<li><strong>Refresh History Page - kluczowe funkcje:</strong><ul>
+<li>📊 <strong>Wykres czasów odświeżania</strong> - łatwe wykrywanie anomalii wydajnościowych</li>
+<li>🔍 <strong>Show Query Profile</strong> - szczegółowa analiza każdego odświeżenia</li>
+<li>⚠️ <strong>Source Data Timestamp</strong> - sprawdzenie czy dane są aktualne</li>
+<li>❌ <strong>Failed Refreshes</strong> - identyfikacja problemów z odświeżaniem</li>
+</ul>
+</li>
+<li><strong>Graph View - wizualizacja zależności:</strong><ul>
+<li>Pokazuje powiązania między Dynamic Tables</li>
+<li>Identyfikuje upstream/downstream dependencies</li>
+<li>Pomaga w troubleshooting - failed upstream table blokuje downstream tables</li>
+</ul>
+</li>
+</ol>
+<p><strong>💡 Praktyczne wskazówki:</strong></p>
+<ul>
+<li>Regularnie sprawdzaj Refresh History dla wykrywania trendów wydajnościowych</li>
+<li>Używaj Query Profile do optymalizacji wolnych odświeżeń</li>
+<li>Monitoruj Graph View przy złożonych pipeline&#39;ach z wieloma Dynamic Tables</li>
+<li>Skonfiguruj alerty dla failed refreshes przez Snowsight notifications</li>
+</ul>
 <h2 is-upgraded>📚 Dodatkowe zasoby</h2>
 <ul>
 <li><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables-monitor" target="_blank">Monitor Dynamic Tables</a></li>
